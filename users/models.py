@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from core.models import DatedModel
 
-
-class UserProfile(models.Model):
+class UserProfile(DatedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
@@ -14,7 +14,7 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
-class Agent(models.Model):
+class Agent(DatedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     email = models.EmailField()

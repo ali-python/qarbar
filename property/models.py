@@ -1,9 +1,9 @@
 from django.db import models
 from users .models import Agent
 from django.utils import timezone
+from core.models import DatedModel
 
-
-class Country(models.Model):
+class Country(DatedModel):
     country_name = models.CharField(max_length=100)
     country_code = models.CharField(max_length=10)
     date = models.DateField()
@@ -11,7 +11,7 @@ class Country(models.Model):
     def __str__(self):
         return self.country_name
     
-class City(models.Model):
+class City(DatedModel):
     country = models.ForeignKey(Country, related_name="country_city", on_delete=models.CASCADE, null=True, blank=True)
     city_name = models.CharField(max_length=100)
     city_code = models.CharField(max_length=10)
@@ -20,28 +20,46 @@ class City(models.Model):
     def __str__(self):
         return self.city_name
 
-class Property(models.Model):
+class Property(DatedModel):
     PROPERTY_TYPES = (
+        ('plot', 'Plot'),
         ('villa', 'Villa'),
         ('house', 'House'),
         ('land', 'Land'),
         ('apartment', 'Apartment'),
-        ('commercial', 'Commercial'),
+        ('commercial', 'Commercial')
     )
-
+    R_B_TYPES = (
+        ('rent', 'Rent'),
+        ('sale', 'Sale'),
+    )
+    R_B_type = models.CharField(max_length=20, choices=R_B_TYPES, default="rent")
     property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES, default="villa")
     size_sqf = models.IntegerField(default=0)
-    city = models.ForeignKey(City, related_name="property_city", on_delete=models.CASCADE)
-    agent = models.ForeignKey(Agent, related_name="property_agent", on_delete=models.CASCADE)
+    city = models.ForeignKey(City, related_name="property_city", on_delete=models.CASCADE, null=True, blank=True)
+    agent = models.ForeignKey(Agent, related_name="property_agent", on_delete=models.CASCADE, null=True, blank=True)
     bedrooms = models.IntegerField()
     bathrooms = models.IntegerField()
     kitchen = models.BooleanField()
     floors = models.IntegerField()
     maid_room = models.BooleanField()
     car_porch = models.BooleanField()
-    buy_rent = models.BooleanField()
     available = models.BooleanField(default=True)
+    description = models.CharField(max_length=200, null=True, blank=True)
+    address_area = models.CharField(max_length=200, null=True, blank=True)
     date = models.DateField(default=timezone.now)
 
     def __str__(self):
         return f"{self.property_type} in {self.city.city_name}"
+    
+class Media(DatedModel):
+    MEDIA_TYPES = (
+        ('image', 'Image'),
+        ('Video', 'Video'),
+    )
+    property = models.ForeignKey(Property, related_name="property_media", on_delete=models.CASCADE, null=True, blank=True)
+    media_type = models.CharField(max_length=20, choices=MEDIA_TYPES, default="image")
+    image_url = models.CharField(max_length=250)
+    
+    def __str__(self):
+        return self.media_type

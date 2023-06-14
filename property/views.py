@@ -1,7 +1,11 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
+from django_filters.rest_framework.backends import DjangoFilterBackend
+from rest_framework import viewsets, filters, permissions, status
+from rest_framework.decorators import action
 from .models import Country, City, Property
-from .serializers import CountrySerializer, CitySerializer, PropertySerializer
+from .serializers import CountrySerializer, CitySerializer, PropertySerializer, MediaSerializer, CreatePropertySerializer
+from users.serializers import AgentSerializer
 
 class CountryViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -84,33 +88,52 @@ class CityViewSet(viewsets.ViewSet):
         city.delete()
         return Response(status=204)
 
-class PropertyViewSet(viewsets.ViewSet):
-    def list(self, request):
-        queryset = Property.objects.all()
-        serializer = PropertySerializer(queryset, many=True)
-        return Response(serializer.data)
 
-    def create(self, request):
-        serializer = PropertySerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=201)
+class PropertyViewSet(
+    viewsets.mixins.ListModelMixin,
+    viewsets.mixins.RetrieveModelMixin,
+    viewsets.mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    serializer_class = PropertySerializer
+    queryset = Property.objects.all().order_by('-id')
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
 
-    def retrieve(self, request, pk=None):
-        queryset = Property.objects.all()
-        property_obj = get_object_or_404(queryset, pk=pk)
-        serializer = PropertySerializer(property_obj)
-        return Response(serializer.data)
+    search_fields = ['property_type']
+    ordering_fields = ['created_at', 'updated_at', 'property_type']
+    filter_fields = ['city__city_name']
+    permission_classes = []
 
-    def update(self, request, pk=None):
-        property_obj = get_object_or_404(Property.objects.all(), pk=pk)
-        serializer = PropertySerializer(property_obj, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+    @action(detail=False, methods=['GET'])
+    def agent_properties(self, request):
+        user = self.request.user
+        if user.is_staff or (hasattr(user, 'users') and hasattr(user.users, 'agent')):
+            # Filter properties based on the agent user
+            if user.is_staff:
+                # If the user is staff, show all properties
+                properties = self.get_queryset()
+            else:
+                # If the user is an agent user, show only their properties
+                properties = self.get_queryset().filter(agent__agent_user__user=user)
+            serializer = self.get_serializer(properties, many=True)
+            return Response(serializer.data)
+        return HttpResponse("Unauthorized", status=401)
 
-    def destroy(self, request, pk=None):
-        property_obj = get_object_or_404(Property.objects.all(), pk=pk)
-        property_obj.delete()
-        return Response(status=204)
+    def destroy(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated and self.request.user.is_staff or self.request.user.users.agent:
+            return super().destroy(request, *args, **kwargs)
+        return Response({'message': 'Page not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=['POST'])
+    def create_property(self, request):
+        print("coming_______________________")
+        if self.request.user:
+            serializer = CreatePropertySerializer(data=request.data, context={'request': request})
+            print(serializer)
+            print("____________________s_______________")
+            if serializer.is_valid():
+                property = serializer.save()
+                return Response(PropertySerializer(instance=property, context={'request': request}).data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Page not found ohhh its error and some error'}, status=status.HTTP_404_NOT_FOUND)
 

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
     'users',
     'property',
     'django_filters',
@@ -148,3 +149,6 @@ try:
     from qarbar.settings_local import *  # @UnusedWildImport
 except ImportError:
     pass
+
+APPEND_SLASH = False
+

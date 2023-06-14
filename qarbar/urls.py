@@ -22,9 +22,9 @@ from users.views import LoginView, RegisterView, UserViewSet, AgentView
 
 router = routers.DefaultRouter()
 router.register(r'api/v1/user', UserViewSet, basename='user')
-router.register(r'countries', CountryViewSet, basename='country')
-router.register(r'cities', CityViewSet, basename='city')
-router.register(r'properties', PropertyViewSet, basename='property')
+router.register(r'api/v1/countries', CountryViewSet, basename='country')
+router.register(r'api/v1/cities', CityViewSet, basename='city')
+router.register(r'api/v1/properties', PropertyViewSet, basename='property')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
