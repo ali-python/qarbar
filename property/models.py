@@ -19,6 +19,13 @@ class City(DatedModel):
 
     def __str__(self):
         return self.city_name
+    
+class Area(DatedModel):
+    city=models.ForeignKey(City, related_name="city_area", on_delete=models.CASCADE, null=True, blank=True)
+    area = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.city.city_name
 
 class Property(DatedModel):
     PROPERTY_TYPES = (
@@ -36,7 +43,7 @@ class Property(DatedModel):
     R_B_type = models.CharField(max_length=20, choices=R_B_TYPES, default="rent")
     property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES, default="villa")
     size_sqf = models.IntegerField(default=0)
-    city = models.ForeignKey(City, related_name="property_city", on_delete=models.CASCADE, null=True, blank=True)
+    area = models.ForeignKey(Area, related_name="property_area", on_delete=models.CASCADE, null=True, blank=True)
     agent = models.ForeignKey(Agent, related_name="property_agent", on_delete=models.CASCADE, null=True, blank=True)
     bedrooms = models.IntegerField()
     bathrooms = models.IntegerField()
@@ -46,11 +53,10 @@ class Property(DatedModel):
     car_porch = models.BooleanField()
     available = models.BooleanField(default=True)
     description = models.CharField(max_length=200, null=True, blank=True)
-    address_area = models.CharField(max_length=200, null=True, blank=True)
     date = models.DateField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.property_type} in {self.city.city_name}"
+        return f"{self.property_type}"
     
 class Media(DatedModel):
     MEDIA_TYPES = (

@@ -3,8 +3,9 @@ from rest_framework.response import Response
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets, filters, permissions, status
 from rest_framework.decorators import action
-from .models import Country, City, Property
-from .serializers import CountrySerializer, CitySerializer, PropertySerializer, MediaSerializer, CreatePropertySerializer
+from .models import Country, City, Property, Area
+from .serializers import (CountrySerializer, CitySerializer, PropertySerializer, 
+                          MediaSerializer, CreatePropertySerializer, AreaSerializer)
 from users.serializers import AgentSerializer
 
 class CountryViewSet(viewsets.ViewSet):
@@ -87,6 +88,47 @@ class CityViewSet(viewsets.ViewSet):
 
         city.delete()
         return Response(status=204)
+    
+
+class AreaViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = Area.objects.all()
+        serializer = AreaSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        serializer = AreaSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    def retrieve(self, request, pk=None):
+        queryset = Area.objects.all()
+        area = get_object_or_404(queryset, pk=pk)
+        serializer = AreaSerializer(area)
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        try:
+            area = Area.objects.get(pk=pk)
+        except Area.DoesNotExist:
+            return Response(status=404)
+
+        serializer = AreaSerializer(area, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    def destroy(self, request, pk=None):
+        try:
+            area = Area.objects.get(pk=pk)
+        except Area.DoesNotExist:
+            return Response(status=404)
+
+        area.delete()
+        return Response(status=204)
 
 
 class PropertyViewSet(
@@ -101,7 +143,6 @@ class PropertyViewSet(
 
     search_fields = ['property_type']
     ordering_fields = ['created_at', 'updated_at', 'property_type']
-    filter_fields = ['city__city_name']
     permission_classes = []
 
     @action(detail=False, methods=['GET'])

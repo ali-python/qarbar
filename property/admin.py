@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import City, Property, Country, Media
+from .models import City, Property, Country, Media, Area
 from django.utils.html import format_html
 
 
@@ -15,10 +15,13 @@ class CountryAdmin(admin.ModelAdmin):
 class CityAdmin(admin.ModelAdmin):
     list_display = ('country','city_name', 'city_code', 'date')
 
+class AreaAdmin(admin.ModelAdmin):
+    list_display = ('city','area')
+
 class PropertyAdmin(admin.ModelAdmin):
-    list_display = ('property_type', 'size_sqf', 'city', 'bedrooms', 'bathrooms', 'kitchen', 'floors', 'maid_room',
+    list_display = ('property_type', 'size_sqf', 'area', 'bedrooms', 'bathrooms', 'kitchen', 'floors', 'maid_room',
                     'car_porch', 'agent', 'available', 'date')
-    list_filter = ('property_type', 'city',)
+    list_filter = ('property_type',)
     inlines = [MediaTabularAdmin,]
 
 class MediaAdmin(admin.ModelAdmin):
@@ -34,4 +37,5 @@ class MediaAdmin(admin.ModelAdmin):
 admin.site.register(Media, MediaAdmin)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(City, CityAdmin)
+admin.site.register(Area, AreaAdmin)
 admin.site.register(Property, PropertyAdmin)

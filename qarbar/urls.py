@@ -17,13 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from property.views import CountryViewSet, CityViewSet, PropertyViewSet
+from property.views import CountryViewSet, CityViewSet, PropertyViewSet, AreaViewSet
 from users.views import LoginView, RegisterView, UserViewSet, AgentView
 
 router = routers.DefaultRouter()
 router.register(r'api/v1/user', UserViewSet, basename='user')
 router.register(r'api/v1/countries', CountryViewSet, basename='country')
 router.register(r'api/v1/cities', CityViewSet, basename='city')
+router.register(r'api/v1/area', AreaViewSet, basename='area')
 router.register(r'api/v1/properties', PropertyViewSet, basename='property')
 
 urlpatterns = [
