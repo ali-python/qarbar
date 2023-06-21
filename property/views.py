@@ -4,6 +4,7 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets, filters, permissions, status
 from rest_framework.decorators import action
 from .models import Country, City, Property, Area
+from property.filter_set import PropertyFilter
 from .serializers import (CountrySerializer, CitySerializer, PropertySerializer, 
                           MediaSerializer, CreatePropertySerializer, AreaSerializer)
 from users.serializers import AgentSerializer
@@ -141,8 +142,9 @@ class PropertyViewSet(
     queryset = Property.objects.all().order_by('-id')
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
 
-    search_fields = ['property_type']
+    # search_fields = ['property_type']
     ordering_fields = ['created_at', 'updated_at', 'property_type']
+    filterset_class = PropertyFilter
     permission_classes = []
 
     @action(detail=False, methods=['GET'])
