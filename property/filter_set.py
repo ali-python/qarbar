@@ -9,8 +9,11 @@ class PropertyFilter(django_filters.FilterSet):
     available = django_filters.BooleanFilter()
     agent = django_filters.CharFilter(field_name='agent__name', lookup_expr='icontains')
     R_B_type = django_filters.ChoiceFilter(choices=Property.R_B_TYPES)
+    bedrooms = django_filters.NumberFilter(field_name='bedrooms', lookup_expr='exact')
+    size_sqf = django_filters.NumberFilter(field_name='size_sqf', lookup_expr='exact')
+    maid_room = django_filters.BooleanFilter()
 
     class Meta:
         model = Property
-        fields = ['area', 'city_name', 'available', 'agent', 'R_B_type']
+        fields = ['area', 'city_name', 'available', 'agent', 'R_B_type', 'bedrooms', 'size_sqf', 'maid_room']
 

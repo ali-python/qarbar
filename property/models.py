@@ -57,6 +57,14 @@ class Property(DatedModel):
 
     def __str__(self):
         return f"{self.property_type}"
+
+class PropertyLocation(models.Model):
+    property = models.OneToOneField(Property, on_delete=models.CASCADE, related_name='location')
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+
+    def __str__(self):
+        return f"Location for Property: {self.property}"
     
 class Media(DatedModel):
     MEDIA_TYPES = (

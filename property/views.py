@@ -166,6 +166,12 @@ class PropertyViewSet(
         if self.request.user.is_authenticated and self.request.user.is_staff or self.request.user.users.agent:
             return super().destroy(request, *args, **kwargs)
         return Response({'message': 'Page not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(detail=True, methods=['GET'])
+    def detail_property(self, request, pk=None):
+        property = self.get_object()
+        serializer = PropertySerializer(property)
+        return Response(serializer.data)
 
     @action(detail=False, methods=['POST'])
     def create_property(self, request):
