@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from .models import Country, City, Property, Media, Area
 from users.serializers import AgentSerializer
+from company.serializers import CompanyAgentSerializer
 from users.models import Agent
-
+from company.models import CompanyAgent
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
@@ -31,6 +32,7 @@ class PropertySerializer(serializers.ModelSerializer):
     media = MediaSerializer(many=True, read_only=True, source='property_media')
     area = AreaSerializer(read_only=True)
     agent = AgentSerializer(read_only=True)
+    company_agent = CompanyAgentSerializer(read_only=True)
     date = CustomDateField()
 
     class Meta:
@@ -43,6 +45,7 @@ class PropertySerializer(serializers.ModelSerializer):
             'size_sqf',
             'area',
             'agent',
+            'company_agent',
             'bedrooms',
             'bathrooms',
             'kitchen',
@@ -69,6 +72,7 @@ class CreatePropertySerializer(serializers.Serializer):
     size_sqf = serializers.IntegerField()
     area = serializers.PrimaryKeyRelatedField(queryset=Area.objects.all())
     agent = serializers.PrimaryKeyRelatedField(queryset=Agent.objects.all())
+    company_agent = serializers.PrimaryKeyRelatedField(queryset=CompanyAgent.objects.all())
     bedrooms = serializers.IntegerField()
     bathrooms = serializers.IntegerField()
     kitchen = serializers.BooleanField()
