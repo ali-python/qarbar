@@ -2,6 +2,7 @@ from django.db import models
 from users .models import Agent
 from django.utils import timezone
 from core.models import DatedModel
+from company.models import CompanyAgent
 
 class Country(DatedModel):
     country_name = models.CharField(max_length=100)
@@ -44,7 +45,8 @@ class Property(DatedModel):
     property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES, default="villa")
     size_sqf = models.IntegerField(default=0)
     area = models.ForeignKey(Area, related_name="property_area", on_delete=models.CASCADE, null=True, blank=True)
-    agent = models.ForeignKey(Agent, related_name="property_agent", on_delete=models.CASCADE, null=True, blank=True)
+    agent = models.ForeignKey(Agent, related_name="individual_properties", on_delete=models.CASCADE, null=True, blank=True)
+    company_agent = models.ForeignKey(CompanyAgent, related_name="company_properties", on_delete=models.CASCADE, null=True, blank=True)
     bedrooms = models.IntegerField()
     bathrooms = models.IntegerField()
     kitchen = models.BooleanField()
@@ -57,6 +59,7 @@ class Property(DatedModel):
 
     def __str__(self):
         return f"{self.property_type}"
+
     
 class Media(DatedModel):
     MEDIA_TYPES = (
