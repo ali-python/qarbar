@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import City, Property, Country, Media, Area
+from .models import City, Property, Country, Media, Area,PropertyLocation
 from django.utils.html import format_html
 
 
@@ -23,6 +23,9 @@ class PropertyAdmin(admin.ModelAdmin):
                     'car_porch', 'agent','company_agent', 'available', 'date')
     list_filter = ('property_type',)
     inlines = [MediaTabularAdmin,]
+
+class PropertyLocationAdmin(admin.ModelAdmin):
+    list_display = ('property', 'latitude', 'longitude')
 
 class MediaAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'property','media_type')
