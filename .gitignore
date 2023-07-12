@@ -1,3 +1,5 @@
 # python
 db.sqlite3
-meditech/settings_local.py
+qarbar/settings_local.py
+*.pyc
+__pycache__/
