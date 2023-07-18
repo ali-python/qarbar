@@ -31,8 +31,8 @@ class CustomDateField(serializers.ReadOnlyField):
 class PropertySerializer(serializers.ModelSerializer):
     media = MediaSerializer(many=True, read_only=True, source='property_media')
     area = AreaSerializer(read_only=True)
-    agent = AgentSerializer(read_only=True)
-    company_agent = CompanyAgentSerializer(read_only=True)
+    agent = AgentSerializer(read_only=True, required=False)
+    company_agent = CompanyAgentSerializer(read_only=True, required=False)
     date = CustomDateField()
 
     class Meta:
@@ -71,8 +71,8 @@ class CreatePropertySerializer(serializers.Serializer):
     property_type = serializers.CharField(max_length=100)
     size_sqf = serializers.IntegerField()
     area = serializers.PrimaryKeyRelatedField(queryset=Area.objects.all())
-    agent = serializers.PrimaryKeyRelatedField(queryset=Agent.objects.all())
-    company_agent = serializers.PrimaryKeyRelatedField(queryset=CompanyAgent.objects.all())
+    agent = serializers.PrimaryKeyRelatedField(queryset=Agent.objects.all(), required=False)
+    company_agent = serializers.PrimaryKeyRelatedField(queryset=CompanyAgent.objects.all(), required=False)
     bedrooms = serializers.IntegerField()
     bathrooms = serializers.IntegerField()
     kitchen = serializers.BooleanField()

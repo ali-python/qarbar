@@ -55,6 +55,8 @@ class Property(DatedModel):
     car_porch = models.BooleanField()
     available = models.BooleanField(default=True)
     description = models.CharField(max_length=200, null=True, blank=True)
+    price_per_marla = models.IntegerField(null=True, blank=True, default=0)
+    total_price = models.IntegerField(null=True, blank=True, default=0)
     date = models.DateField(default=timezone.now)
 
     def __str__(self):
