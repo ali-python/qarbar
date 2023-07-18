@@ -10,9 +10,11 @@ from .serializers import (CountrySerializer, CitySerializer, PropertySerializer,
 from users.serializers import AgentSerializer
 
 class CountryViewSet(viewsets.ViewSet):
+    permission_classes = []
     def list(self, request):
         queryset = Country.objects.all()
         serializer = CountrySerializer(queryset, many=True)
+        
         return Response(serializer.data)
 
     def create(self, request):
@@ -51,6 +53,7 @@ class CountryViewSet(viewsets.ViewSet):
 
 
 class CityViewSet(viewsets.ViewSet):
+    permission_classes = []
     def list(self, request):
         queryset = City.objects.all()
         serializer = CitySerializer(queryset, many=True)
@@ -156,15 +159,11 @@ class PropertyViewSet(
                 # If the user is staff, show all properties
                 properties = self.get_queryset()
             else:
-                # If the user is an agent user, show both individual agent and company agent properties
-                individual_agent_properties = self.get_queryset().filter(agent__agent_user__user=user)
-                company_agent_properties = self.get_queryset().filter(company_agent__user=user)
-                properties = individual_agent_properties | company_agent_properties
-
+                # If the user is an agent user, show only their properties
+                properties = self.get_queryset().filter(agent__agent_user__user=user)
             serializer = self.get_serializer(properties, many=True)
             return Response(serializer.data)
         return HttpResponse("Unauthorized", status=401)
-
 
     def destroy(self, request, *args, **kwargs):
         if self.request.user.is_authenticated and self.request.user.is_staff or self.request.user.users.agent:

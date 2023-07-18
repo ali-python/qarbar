@@ -5,6 +5,7 @@ from .models import Company, CustomUser, CompanyAgent
 from .serializers import CompanySerializer, CustomUserSerializer, CompanyAgentSerializer
 
 class CompanyViewSet(viewsets.ViewSet):
+    permission_classes = []
     def list(self, request):
         queryset = Company.objects.all()
         serializer = CompanySerializer(queryset, many=True)
@@ -34,6 +35,7 @@ class CompanyViewSet(viewsets.ViewSet):
         return Response(status=204)
 
 class CustomUserViewSet(viewsets.ViewSet):
+    permission_classes = []
     def list(self, request):
         queryset = CustomUser.objects.all()
         serializer = CustomUserSerializer(queryset, many=True)
@@ -63,6 +65,7 @@ class CustomUserViewSet(viewsets.ViewSet):
         return Response(status=204)
 
 class CompanyAgentViewSet(viewsets.ViewSet):
+    permission_classes = []
     def list(self, request):
         queryset = CompanyAgent.objects.all()
         serializer = CompanyAgentSerializer(queryset, many=True)
