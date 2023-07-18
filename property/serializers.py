@@ -55,6 +55,8 @@ class PropertySerializer(serializers.ModelSerializer):
             'available',
             'date',
             'description',
+            'price_per_marla',
+            'total_price',
             'created_at',
             'updated_at',
         ]
@@ -81,6 +83,8 @@ class CreatePropertySerializer(serializers.Serializer):
     car_porch = serializers.BooleanField()
     available = serializers.BooleanField()
     description = serializers.CharField(max_length=1000)
+    total_price = serializers.IntegerField()
+    price_per_marla = serializers.IntegerField()
 
     def create(self, validated_data):
         media_data = validated_data.pop('media')
