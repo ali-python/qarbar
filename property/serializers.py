@@ -55,7 +55,6 @@ class PropertySerializer(serializers.ModelSerializer):
             'available',
             'date',
             'description',
-            'price_per_marla',
             'total_price',
             'created_at',
             'updated_at',

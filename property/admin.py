@@ -20,7 +20,7 @@ class AreaAdmin(admin.ModelAdmin):
 
 class PropertyAdmin(admin.ModelAdmin):
     list_display = ('property_type', 'R_B_type', 'size_sqf', 'area', 'bedrooms', 'bathrooms', 'kitchen', 'floors', 'maid_room',
-                    'car_porch', 'agent','company_agent', 'available','price_per_marla', 'total_price', 'date')
+                    'car_porch', 'agent','company_agent', 'available', 'total_price', 'date')
     list_filter = ('property_type',)
     inlines = [MediaTabularAdmin,]
 
