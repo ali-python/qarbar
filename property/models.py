@@ -35,27 +35,42 @@ class Property(DatedModel):
         ('house', 'House'),
         ('land', 'Land'),
         ('apartment', 'Apartment'),
-        ('commercial', 'Commercial')
+        ('commercial', 'Commercial'),
+        ('townhouse', 'TownHouse'),
+        ('penthouse', 'PentHouse'),
+        ('fullfloor', 'FullFloor'),
+        ('halffloor', 'HalfFloor'),
+        ('wholebuilding', 'WholeBuilding'),
+        ('bulkrentunit', 'BulkRentUnit'),
+        ('bulksaleunit', 'BulkSaleUnit'),
+        ('bungalow', 'Bungalow'),
+        ('hotelandhotelappartment', 'HotelAndHotelAppartment'),
     )
     R_B_TYPES = (
         ('rent', 'Rent'),
         ('sale', 'Sale'),
     )
     R_B_type = models.CharField(max_length=20, choices=R_B_TYPES, default="rent")
-    property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES, default="villa")
+    property_type = models.CharField(max_length=50, choices=PROPERTY_TYPES, default="villa")
     size_sqf = models.IntegerField(default=0)
     area = models.ForeignKey(Area, related_name="property_area", on_delete=models.CASCADE, null=True, blank=True)
     agent = models.ForeignKey(Agent, related_name="individual_properties", on_delete=models.CASCADE, null=True, blank=True)
     company_agent = models.ForeignKey(CompanyAgent, related_name="company_properties", on_delete=models.CASCADE, null=True, blank=True)
     bedrooms = models.IntegerField()
     bathrooms = models.IntegerField()
-    kitchen = models.BooleanField()
+    kitchen = models.IntegerField()
     floors = models.IntegerField()
     maid_room = models.BooleanField()
+    built_in_wardrobes = models.BooleanField()
+    kitchen_appliances = models.BooleanField()
+    balcony = models.BooleanField()
+    furnished_unfurnished = models.BooleanField()
+    covered_parking = models.BooleanField()
+    lobby_in_building = models.BooleanField()
+    security = models.BooleanField()
     car_porch = models.BooleanField()
     available = models.BooleanField(default=True)
     description = models.CharField(max_length=200, null=True, blank=True)
-    price_per_marla = models.IntegerField(null=True, blank=True, default=0)
     total_price = models.IntegerField(null=True, blank=True, default=0)
     date = models.DateField(default=timezone.now)
 
