@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import City, Property, Country, Media, Area,PropertyLocation
+from .models import City, Property, Country, Media, Area,PropertyLocation, PropertyAmenties, PropertyTypes, PropertyInstallment
 from django.utils.html import format_html
 
 
@@ -10,22 +10,22 @@ class CountryMedia(admin.ModelAdmin):
     list_display = ('property_type', 'image_url')
 
 class CountryAdmin(admin.ModelAdmin):
-    list_display = ('country_name', 'country_code', 'date')
+    list_display = ('country_name', 'country_code')
 
 class CityAdmin(admin.ModelAdmin):
-    list_display = ('country','city_name', 'city_code', 'date')
+    list_display = ('country','city_name', 'city_code')
 
 class AreaAdmin(admin.ModelAdmin):
     list_display = ('city','area')
 
 class PropertyAdmin(admin.ModelAdmin):
-    list_display = ('property_type', 'R_B_type', 'size_sqf', 'area', 'bedrooms', 'bathrooms', 'kitchen', 'floors', 'maid_room',
-                    'car_porch', 'agent','company_agent', 'available', 'total_price', 'date')
+    list_display = ('property_type', 'R_B_type', 'size_sqf', 'area','agent','company_agent', 'available', 'total_price', 'date')
     list_filter = ('property_type',)
     inlines = [MediaTabularAdmin,]
 
 class PropertyLocationAdmin(admin.ModelAdmin):
     list_display = ('property', 'latitude', 'longitude')
+
 
 class MediaAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'property','media_type')
@@ -42,3 +42,8 @@ admin.site.register(Country, CountryAdmin)
 admin.site.register(City, CityAdmin)
 admin.site.register(Area, AreaAdmin)
 admin.site.register(Property, PropertyAdmin)
+admin.site.register(PropertyLocation, PropertyLocationAdmin)
+admin.site.register(PropertyAmenties)
+admin.site.register(PropertyTypes)
+admin.site.register(PropertyInstallment)
+
