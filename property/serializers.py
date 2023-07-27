@@ -1,9 +1,18 @@
 from rest_framework import serializers
-from .models import Country, City, Property, Media, Area, PropertyAmenties, PropertyTypes, PropertyInstallment
 from users.serializers import AgentSerializer
 from company.serializers import CompanyAgentSerializer
 from users.models import Agent
 from company.models import CompanyAgent
+from .models import (
+Country,
+City, 
+Property, 
+Media, 
+Area, 
+PropertyAmenties, 
+PropertyTypes, 
+PropertyInstallment
+)
 
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,8 +46,7 @@ class AmentiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = PropertyAmenties
         fields = ['id', 'other_nearby_palces', 'bedrooms', 'distance_from_airport', 'built_in_year',
-                  'bathrooms', 'kitchen', 'floors', 'maid_room', 'built_in_wardrobes', 'kitchen_appliances',
-                  'balcony', 'lower_portion', 'Farmhouse', 'electricity_backup', 'furnished_unfurnished',
+                  'bathrooms', 'kitchen', 'floors', 'maid_room', 'built_in_wardrobes', 'kitchen_appliances','balcony', 'lower_portion', 'Farmhouse', 'electricity_backup', 'furnished_unfurnished',
                   'covered_parking', 'lobby_in_building', 'security', 'parking_space', 'drawing_room', 'study_room',
                   'laundry_room', 'store_room', 'gym', 'lounge_sitting_area', 'internet', 'swimming_pool', 'mosque',
                   'kids_play_area', 'medical_center', 'community_lawn_garden', 'near_by_school', 'near_by_hospital',
@@ -70,7 +78,6 @@ class PropertySerializer(serializers.ModelSerializer):
             'media',
             'R_B_type',
             'property_type',
-            'size_sqf',
             'area',
             'agent',
             'company_agent',
@@ -95,7 +102,6 @@ class CreatePropertySerializer(serializers.Serializer):
     )
     R_B_type = serializers.ChoiceField(choices=[('rent', 'Rent'), ('buy', 'Buy')])
     property_type = serializers.CharField(max_length=100)
-    size_sqf = serializers.IntegerField()
     area = serializers.PrimaryKeyRelatedField(queryset=Area.objects.all())
     agent = serializers.PrimaryKeyRelatedField(queryset=Agent.objects.all(), required=False)
     company_agent = serializers.PrimaryKeyRelatedField(queryset=CompanyAgent.objects.all(), required=False)

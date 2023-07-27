@@ -99,11 +99,12 @@ class PropertyTypes(models.Model):
         ('sqyd', 'Sq.Yd.'),
         ('kanal', 'Kanal'),
     )
-    plot_types = models.CharField(max_length=100, choices=PLOT_TYPES, default="residetial_plot")
-    home_types = models.CharField(max_length=100, choices=HOME_TYPES, default="house")
-    commercial_types = models.CharField(max_length=100, choices=COMMERCIAL_TYPES, default="office")
-    unit_types = models.CharField(max_length=100, choices=UNIT_TYPES, default="marla")
-    other_description = models.CharField(max_length=250)
+    plot_types = models.CharField(max_length=100, choices=PLOT_TYPES, default="residetial_plot", null=True, blank=True)
+    home_types = models.CharField(max_length=100, choices=HOME_TYPES, default="house", null=True, blank=True)
+    commercial_types = models.CharField(max_length=100, choices=COMMERCIAL_TYPES, default="office", null=True, blank=True)
+    unit_types = models.CharField(max_length=100, choices=UNIT_TYPES, default="marla", null=True, blank=True)
+    size_sqf = models.IntegerField(default=0, null=True, blank=True)
+    other_description = models.CharField(max_length=250, null=True, blank=True)
 
     def __str__(self):
         return f"{self.unit_types}"
@@ -125,7 +126,6 @@ class Property(DatedModel):
     mobile = models.CharField(max_length=50, null=True, blank=True)
     email = models.CharField(max_length=100, null=True, blank=True)
     R_B_type = models.CharField(max_length=20, choices=R_B_TYPES, default="rent")
-    size_sqf = models.IntegerField(default=0)
     area = models.ForeignKey(Area, related_name="property_area", on_delete=models.CASCADE, null=True, blank=True)
     agent = models.ForeignKey(Agent, related_name="individual_properties", on_delete=models.CASCADE, null=True, blank=True)
     company_agent = models.ForeignKey(CompanyAgent, related_name="company_properties", on_delete=models.CASCADE, null=True, blank=True)

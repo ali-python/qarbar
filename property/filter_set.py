@@ -16,5 +16,15 @@ class PropertyFilter(django_filters.FilterSet):
 
     class Meta:
         model = Property
-        fields = ['area','property_types', 'total_price', 'city_name', 'available', 'agent', 'R_B_type', 'size_sqf', 'maid_room']
+        fields = [
+                'area',
+                'property_types', 
+                'total_price', 
+                'city_name', 
+                'available', 
+                'agent', 
+                'R_B_type', 
+                'size_sqf', 
+                'maid_room'
+                ]
 

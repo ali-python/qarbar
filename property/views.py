@@ -5,9 +5,16 @@ from rest_framework import viewsets, filters, permissions, status
 from rest_framework.decorators import action
 from .models import Country, City, Property, Area
 from property.filter_set import PropertyFilter
-from .serializers import (CountrySerializer, CitySerializer, PropertySerializer, 
-                          MediaSerializer, CreatePropertySerializer, AreaSerializer)
 from users.serializers import AgentSerializer
+from .serializers import (
+    CountrySerializer,
+    CitySerializer,
+    PropertySerializer, 
+    MediaSerializer,
+    CreatePropertySerializer, 
+    AreaSerializer
+    )
+
 
 class CountryViewSet(viewsets.ViewSet):
     permission_classes = []
@@ -178,11 +185,8 @@ class PropertyViewSet(
 
     @action(detail=False, methods=['POST'])
     def create_property(self, request):
-        print("coming_______________________")
         if self.request.user:
             serializer = CreatePropertySerializer(data=request.data, context={'request': request})
-            print(serializer)
-            print("____________________s_______________")
             if serializer.is_valid():
                 property = serializer.save()
                 return Response(PropertySerializer(instance=property, context={'request': request}).data)
