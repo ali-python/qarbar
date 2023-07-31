@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.fields import SkipField
 from users.serializers import AgentSerializer
 from company.serializers import CompanyAgentSerializer
 from users.models import Agent
@@ -66,7 +67,7 @@ class PropertySerializer(serializers.ModelSerializer):
     area = AreaSerializer(read_only=True)
     amenties = AmentiesSerializer(read_only=True)
     property_location = PropertyLocationSerializer(read_only=True)
-    property_types = PropertyTypesSerializer(read_only=True)
+    property_type = PropertyTypesSerializer(read_only=True)
     installment = InstallmentSerializer(read_only=True)
     agent = AgentSerializer(read_only=True, required=False)
     company_agent = CompanyAgentSerializer(read_only=True, required=False)
@@ -78,13 +79,12 @@ class PropertySerializer(serializers.ModelSerializer):
             'id',
             'media',
             'rent_sale_type',
-            'property_type',
             'area',
             'agent',
             'company_agent',
             'amenties',
             'property_location',
-            'property_types',
+            'property_type',
             'installment',
             'available',
             'date',
@@ -94,36 +94,45 @@ class PropertySerializer(serializers.ModelSerializer):
             'updated_at',
         ]
 
-
-class CreatePropertySerializer(serializers.Serializer):
+class CreatePropertySerializer(serializers.ModelSerializer):
     media = serializers.ListSerializer(
         child=serializers.DictField(
             child=serializers.CharField(max_length=200)
         ),
         required=True
     )
-    rent_sale_type = serializers.ChoiceField(choices=[('rent', 'Rent'), ('buy', 'Buy')])
-    property_type = serializers.CharField(max_length=100)
-    area = serializers.PrimaryKeyRelatedField(queryset=Area.objects.all())
-    agent = serializers.PrimaryKeyRelatedField(queryset=Agent.objects.all(), required=False)
-    company_agent = serializers.PrimaryKeyRelatedField(queryset=CompanyAgent.objects.all(), required=False)
-    amenties = serializers.PrimaryKeyRelatedField(queryset=PropertyAmenties.objects.all())
-    property_location = serializers.PrimaryKeyRelatedField(queryset=PropertyLocation.objects.all())
-    property_types = serializers.PrimaryKeyRelatedField(queryset=PropertyTypes.objects.all())
-    installment = serializers.PrimaryKeyRelatedField(queryset=PropertyInstallment.objects.all())
-    available = serializers.BooleanField()
-    description = serializers.CharField(max_length=1000)
-    total_price = serializers.IntegerField()
-    price_per_marla = serializers.IntegerField()
+    amenties = AmentiesSerializer()
+    property_type = PropertyTypesSerializer()
+    property_location = PropertyLocationSerializer()
+    installment = InstallmentSerializer()
+
+    class Meta:
+        model = Property
+        fields = '__all__'
 
     def create(self, validated_data):
         media_data = validated_data.pop('media')
+
+        # Create related models first and then assign them to the main instance
+        amenties_data = validated_data.pop('amenties', None)
+        property_type_data = validated_data.pop('property_type', None)
+        property_location_data = validated_data.pop('property_location', None)
+        installment_data = validated_data.pop('installment', None)
+
         property = Property.objects.create(**validated_data)
+
+        # Handle nested objects
+        if amenties_data:
+            PropertyAmenties.objects.create(property=property, **amenties_data)
+        if property_type_data:
+            PropertyTypes.objects.create(property=property, **property_type_data)
+        if property_location_data:
+            PropertyLocation.objects.create(property=property, **property_location_data)
+        if installment_data:
+            PropertyInstallment.objects.create(property=property, **installment_data)
 
         for media in media_data:
             Media.objects.create(property=property, **media)
 
         return property
-
-
 
