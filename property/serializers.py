@@ -4,15 +4,15 @@ from company.serializers import CompanyAgentSerializer
 from users.models import Agent
 from company.models import CompanyAgent
 from .models import (
-Country,
-City, 
-Property, 
-Media, 
-Area, 
-PropertyAmenties, 
-PropertyTypes, 
-PropertyInstallment
-)
+    Country,
+    City, 
+    Property, 
+    Media, 
+    Area, 
+    PropertyAmenties, 
+    PropertyTypes, 
+    PropertyInstallment
+    )
 
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,12 +45,7 @@ class PropertyTypesSerializer(serializers.ModelSerializer):
 class AmentiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = PropertyAmenties
-        fields = ['id', 'other_nearby_palces', 'bedrooms', 'distance_from_airport', 'built_in_year',
-                  'bathrooms', 'kitchen', 'floors', 'maid_room', 'built_in_wardrobes', 'kitchen_appliances','balcony', 'lower_portion', 'Farmhouse', 'electricity_backup', 'furnished_unfurnished',
-                  'covered_parking', 'lobby_in_building', 'security', 'parking_space', 'drawing_room', 'study_room',
-                  'laundry_room', 'store_room', 'gym', 'lounge_sitting_area', 'internet', 'swimming_pool', 'mosque',
-                  'kids_play_area', 'medical_center', 'community_lawn_garden', 'near_by_school', 'near_by_hospital',
-                  'near_by_shopping_mall', 'other_description']
+        fields = '__all__'
 
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:

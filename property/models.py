@@ -115,22 +115,27 @@ class PropertyInstallment(models.Model):
     monthly_inst = models.IntegerField(default=0)
     ready_for_possession = models.BooleanField(default=False)
 
+class PropertyLocation(models.Model):
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
+
 class Property(DatedModel):
-    R_B_TYPES = (
+    R_S_TYPES = (
         ('rent', 'Rent'),
         ('sale', 'Sale'),
     )
     title = models.CharField(max_length=200, null=True, blank=True)
-    phone = models.CharField(max_length=50, null=True, blank=True)
+    phone = models.CharField(max_length=50, default=0)
     landline = models.CharField(max_length=50, null=True, blank=True)
-    mobile = models.CharField(max_length=50, null=True, blank=True)
+    secondry_phone = models.CharField(max_length=50, null=True, blank=True)
     email = models.CharField(max_length=100, null=True, blank=True)
-    R_B_type = models.CharField(max_length=20, choices=R_B_TYPES, default="rent")
+    rent_sale_type = models.CharField(max_length=20, choices=R_S_TYPES, default="rent", null=True, blank=True)
     area = models.ForeignKey(Area, related_name="property_area", on_delete=models.CASCADE, null=True, blank=True)
     agent = models.ForeignKey(Agent, related_name="individual_properties", on_delete=models.CASCADE, null=True, blank=True)
     company_agent = models.ForeignKey(CompanyAgent, related_name="company_properties", on_delete=models.CASCADE, null=True, blank=True)
     amenties = models.OneToOneField(PropertyAmenties, on_delete=models.CASCADE, null=True, blank=True)
     property_type = models.OneToOneField(PropertyTypes, on_delete=models.CASCADE, null=True, blank=True)
+    property_location = models.OneToOneField(PropertyLocation, on_delete=models.CASCADE, null=True, blank=True)
     installment = models.OneToOneField(PropertyInstallment, on_delete=models.CASCADE, null=True, blank=True)
     available = models.BooleanField(default=True)
     description = models.CharField(max_length=200, null=True, blank=True)
@@ -140,10 +145,6 @@ class Property(DatedModel):
     def __str__(self):
         return f"{self.title}"
 
-class PropertyLocation(models.Model):
-    property = models.OneToOneField(Property, on_delete=models.CASCADE, related_name='location')
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
 class Media(DatedModel):
     MEDIA_TYPES = (
