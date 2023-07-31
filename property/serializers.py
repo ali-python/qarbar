@@ -11,8 +11,13 @@ from .models import (
     Area, 
     PropertyAmenties, 
     PropertyTypes, 
-    PropertyInstallment
+    PropertyInstallment,
+    PropertyLocation
     )
+class PropertyLocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PropertyLocation
+        fields = '__all__'
 
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,6 +65,7 @@ class PropertySerializer(serializers.ModelSerializer):
     media = MediaSerializer(many=True, read_only=True, source='property_media')
     area = AreaSerializer(read_only=True)
     amenties = AmentiesSerializer(read_only=True)
+    property_location = PropertyLocationSerializer(read_only=True)
     property_types = PropertyTypesSerializer(read_only=True)
     installment = InstallmentSerializer(read_only=True)
     agent = AgentSerializer(read_only=True, required=False)
@@ -71,12 +77,13 @@ class PropertySerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'media',
-            'R_B_type',
+            'rent_sale_type',
             'property_type',
             'area',
             'agent',
             'company_agent',
             'amenties',
+            'property_location',
             'property_types',
             'installment',
             'available',
@@ -95,12 +102,13 @@ class CreatePropertySerializer(serializers.Serializer):
         ),
         required=True
     )
-    R_B_type = serializers.ChoiceField(choices=[('rent', 'Rent'), ('buy', 'Buy')])
+    rent_sale_type = serializers.ChoiceField(choices=[('rent', 'Rent'), ('buy', 'Buy')])
     property_type = serializers.CharField(max_length=100)
     area = serializers.PrimaryKeyRelatedField(queryset=Area.objects.all())
     agent = serializers.PrimaryKeyRelatedField(queryset=Agent.objects.all(), required=False)
     company_agent = serializers.PrimaryKeyRelatedField(queryset=CompanyAgent.objects.all(), required=False)
     amenties = serializers.PrimaryKeyRelatedField(queryset=PropertyAmenties.objects.all())
+    property_location = serializers.PrimaryKeyRelatedField(queryset=PropertyLocation.objects.all())
     property_types = serializers.PrimaryKeyRelatedField(queryset=PropertyTypes.objects.all())
     installment = serializers.PrimaryKeyRelatedField(queryset=PropertyInstallment.objects.all())
     available = serializers.BooleanField()
