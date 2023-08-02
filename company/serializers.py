@@ -12,6 +12,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CompanyAgentSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True)
+    user = CustomUserSerializer(read_only=True)
     class Meta:
         model = CompanyAgent
         fields = '__all__'
