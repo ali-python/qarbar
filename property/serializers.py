@@ -94,6 +94,12 @@ class PropertySerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
         ]
+    def get_agent(self, obj):
+        agent = obj.agent
+        if agent is not None:
+            return AgentSerializer(agent).data
+        else:
+            return None
 
 class CreatePropertySerializer(serializers.ModelSerializer):
     media = serializers.ListSerializer(
