@@ -68,6 +68,7 @@ class PropertyAmenties(models.Model):
 
 class PropertyTypes(models.Model):
     HOME_TYPES = (
+        ('null', 'Null'),
         ('house', 'House'),
         ('flat', 'Flat'),
         ('upper_portion', 'Uper Portion'),
@@ -77,6 +78,7 @@ class PropertyTypes(models.Model):
         ('pent_house', 'Pent House'),
     )
     PLOT_TYPES = (
+        ('null', 'Null'),
         ('residetial_plot', 'Residential Plot'),
         ('commercial_plot', 'Commercial Plot'),
         ('agricultural_land', 'Agricultural Land'),
@@ -85,6 +87,7 @@ class PropertyTypes(models.Model):
         ('plot_form', 'Plot Form'),
     )
     COMMERCIAL_TYPES = (
+        ('null', 'Null'),
         ('office', 'Office'),
         ('shop', 'Shop'),
         ('warehouse', 'WareHouse'),
@@ -93,15 +96,16 @@ class PropertyTypes(models.Model):
         ('other', 'other'),
     )
     UNIT_TYPES = (
+        ('null', 'Null'),
         ('marla', 'Marla'),
         ('sqft', 'Sq.Ft.'),
         ('sqm', 'Sq.M.'),
         ('sqyd', 'Sq.Yd.'),
         ('kanal', 'Kanal'),
     )
-    plot_types = models.CharField(max_length=100, choices=PLOT_TYPES, default="residetial_plot", null=True, blank=True)
-    home_types = models.CharField(max_length=100, choices=HOME_TYPES, default="house", null=True, blank=True)
-    commercial_types = models.CharField(max_length=100, choices=COMMERCIAL_TYPES, default="office", null=True, blank=True)
+    plot_types = models.CharField(max_length=100, choices=PLOT_TYPES, default="null", null=True, blank=True)
+    home_types = models.CharField(max_length=100, choices=HOME_TYPES, default="null", null=True, blank=True)
+    commercial_types = models.CharField(max_length=100, choices=COMMERCIAL_TYPES, default="null", null=True, blank=True)
     unit_types = models.CharField(max_length=100, choices=UNIT_TYPES, default="marla", null=True, blank=True)
     size_sqf = models.IntegerField(default=0, null=True, blank=True)
     other_description = models.CharField(max_length=250, null=True, blank=True)

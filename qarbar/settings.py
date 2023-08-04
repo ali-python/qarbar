@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'users',
     'property',
     'company',
+    'new_projects',
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
