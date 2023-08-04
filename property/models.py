@@ -25,7 +25,7 @@ class Area(DatedModel):
 
     def __str__(self):
         if self.city:
-            return f"{self.city} - {self.area}"
+            return f"{self.area} - {self.city or ''}"
         return self.area
 
 class PropertyAmenties(models.Model):
