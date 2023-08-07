@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from core.models import DatedModel
+from django.utils import timezone
 
 class UserProfile(DatedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -15,7 +16,7 @@ class UserProfile(DatedModel):
         return self.user.username
 
 class Agent(DatedModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=100)
     email = models.EmailField()
     phone_number = models.CharField(max_length=20)
@@ -23,7 +24,7 @@ class Agent(DatedModel):
     nationality = models.CharField(max_length=50)
     languages = models.CharField(max_length=200)
     areas = models.CharField(max_length=200)
-    experience_since = models.DateField()
+    experience_since = models.DateField(default=timezone.now)
 
     def __str__(self):
         return self.name

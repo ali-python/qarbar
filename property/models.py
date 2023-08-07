@@ -24,14 +24,16 @@ class Area(DatedModel):
     area = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.city.city_name
+        if self.city:
+            return f"{self.area} - {self.city or ''}"
+        return self.area
 
 class PropertyAmenties(models.Model):
     other_nearby_palces = models.CharField(max_length=250)
-    bedrooms = models.IntegerField()
-    distance_from_airport = models.IntegerField()
-    built_in_year = models.IntegerField()
-    bathrooms = models.IntegerField()
+    bedrooms = models.IntegerField(default=1)
+    distance_from_airport = models.IntegerField(null=True)
+    built_in_year = models.IntegerField(null=True)
+    bathrooms = models.IntegerField(default=1)
     kitchen = models.IntegerField(default=0)
     floors = models.IntegerField(default=0)
     maid_room = models.BooleanField(default=False)
