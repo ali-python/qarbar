@@ -3,13 +3,6 @@ import random
 import uuid
 from faker import Faker
 from django.core.management.base import BaseCommand
-
-# Set the DJANGO_SETTINGS_MODULE environment variable to your settings file
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'qarbar.settings')
-
-import django
-django.setup()
-
 from property.models import (
     Property,
     Area, 
@@ -134,7 +127,9 @@ class Command(BaseCommand):
             # Create Media instances associated with the property
             for _ in range(random.randint(5, 10)):
                 media_type = random.choice(['image', 'Video'])
-                image_url = fake.image_url(width=None, height=None)
+                width = random.randint(300, 400)
+                height = random.randint(500, 600)
+                image_url = fake.image_url(width, height)
                 Media.objects.create(property=property_instance, media_type=media_type, image_url=image_url)
 
     if __name__ == "__main__":
