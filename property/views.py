@@ -152,7 +152,7 @@ class PropertyViewSet(
     queryset = Property.objects.all().order_by('-id')
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
 
-    # search_fields = ['property_type']
+    search_fields = ['property_type__home_types', 'property_type__plot_types',                      'property_type__commercial_types', 'property_type__unit_types', 'size_sqf', 'rent_sale_type']
     ordering_fields = ['created_at', 'updated_at', 'property_type']
     filterset_class = PropertyFilter
     permission_classes = []
