@@ -17,10 +17,10 @@ class PropertyFilter(filters.FilterSet):
     rent_sale_type = django_filters.ChoiceFilter(choices=Property.R_S_TYPES)
     agent__name = django_filters.CharFilter(lookup_expr='icontains')
     company_agent__name = django_filters.CharFilter(lookup_expr='icontains')
-    property_type__plot_types = django_filters.CharFilter(lookup_expr='icontains')
-    property_type__home_types = django_filters.CharFilter(lookup_expr='icontains')
-    property_type__commercial_types = django_filters.CharFilter(lookup_expr='icontains')
-    property_type__unit_types = django_filters.CharFilter(lookup_expr='icontains')
+    plot_types = django_filters.CharFilter(field_name='property_type__plot_types', lookup_expr='icontains')
+    home_types = django_filters.CharFilter(field_name='property_type__home_types', lookup_expr='icontains')
+    commercial_types = django_filters.CharFilter(field_name='property_type__commercial_types', lookup_expr='icontains')
+    unit_type = django_filters.CharFilter(field_name='property_type__unit_types', lookup_expr='icontains')
     class Meta:
         model = Property
         fields = {}
