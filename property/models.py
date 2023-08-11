@@ -41,7 +41,7 @@ class PropertyAmenties(models.Model):
     kitchen_appliances = models.BooleanField(default=False)
     balcony = models.BooleanField(default=False)
     lower_portion = models.BooleanField(default=False)
-    Farmhouse = models.BooleanField(default=False)
+    farmhouse = models.BooleanField(default=False)
     electricity_backup = models.BooleanField(default=False)
     furnished_unfurnished = models.BooleanField(default=False)
     covered_parking = models.BooleanField(default=False)
@@ -105,7 +105,7 @@ class PropertyTypes(models.Model):
     home_types = models.CharField(max_length=100, choices=HOME_TYPES, default="house", null=True, blank=True)
     commercial_types = models.CharField(max_length=100, choices=COMMERCIAL_TYPES, default="office", null=True, blank=True)
     unit_types = models.CharField(max_length=100, choices=UNIT_TYPES, default="marla", null=True, blank=True)
-    size_sqf = models.IntegerField(default=0, null=True, blank=True)
+    size = models.IntegerField(default=0, null=True, blank=True)
     other_description = models.CharField(max_length=250, null=True, blank=True)
 
     def __str__(self):

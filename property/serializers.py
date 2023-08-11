@@ -46,7 +46,7 @@ class InstallmentSerializer(serializers.ModelSerializer):
 class PropertyTypesSerializer(serializers.ModelSerializer):
     class Meta:
         model = PropertyTypes
-        fields = ['id', 'plot_types', 'home_types', 'commercial_types', 'unit_types', 'size_sqf', 'other_description']
+        fields = ['id', 'plot_types', 'home_types', 'commercial_types', 'unit_types', 'size', 'other_description']
 
 class AmentiesSerializer(serializers.ModelSerializer):
     class Meta:

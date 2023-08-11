@@ -30,7 +30,7 @@ class PropertyAmentiesAdmin(admin.ModelAdmin):
     list_display = [
         'other_nearby_palces', 'bedrooms', 'distance_from_airport', 'built_in_year', 'bathrooms',
         'kitchen', 'floors', 'maid_room', 'built_in_wardrobes', 'kitchen_appliances', 'balcony',
-        'lower_portion', 'Farmhouse', 'electricity_backup', 'furnished_unfurnished', 'covered_parking',
+        'lower_portion', 'farmhouse', 'electricity_backup', 'furnished_unfurnished', 'covered_parking',
         'lobby_in_building', 'security', 'parking_space', 'drawing_room', 'study_room', 'laundry_room',
         'store_room', 'gym', 'lounge_sitting_area', 'internet', 'swimming_pool', 'mosque', 'kids_play_area',
         'medical_center', 'community_lawn_garden', 'near_by_school', 'near_by_hospital', 'near_by_shopping_mall',
@@ -39,7 +39,7 @@ class PropertyAmentiesAdmin(admin.ModelAdmin):
 
 class PropertyTypesAdmin(admin.ModelAdmin):
     list_display = [
-        'plot_types', 'home_types', 'commercial_types', 'unit_types', 'size_sqf', 'other_description'
+        'plot_types', 'home_types', 'commercial_types', 'unit_types', 'size', 'other_description'
     ]
 
 class PropertyInstallmentAdmin(admin.ModelAdmin):
