@@ -61,7 +61,7 @@ class UserViewSet(
 ):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = []
 
     def get_queryset(self):
         queryset = self.queryset
@@ -78,31 +78,58 @@ class UserViewSet(
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-class AgentView(APIView):
+# class AgentView(APIView):
+#     authentication_classes = []
+#     permission_classes = []
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = AgentSerializer(data=request.data)
+#         if serializer.is_valid():
+#             agent = serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def put(self, request, *args, **kwargs):
+#         try:
+#             agent = Agent.objects.get(pk=kwargs['pk'])
+#         except Agent.DoesNotExist:
+#             return Response({'detail': 'Agent not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+#         serializer = AgentSerializer(agent, data=request.data)
+#         if serializer.is_valid():
+#             agent = serializer.save()
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#     def get(self, request, *args, **kwargs):
+#         agents = Agent.objects.all()
+#         serializer = AgentSerializer(agents, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class AgentViewSet(viewsets.mixins.ListModelMixin,
+                   viewsets.mixins.RetrieveModelMixin,
+                   viewsets.mixins.DestroyModelMixin,
+                   viewsets.GenericViewSet):
+    queryset = Agent.objects.all()
+    serializer_class = AgentSerializer
     authentication_classes = []
     permission_classes = []
 
-    def post(self, request, *args, **kwargs):
-        serializer = AgentSerializer(data=request.data)
-        if serializer.is_valid():
-            agent = serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        agent = serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def put(self, request, *args, **kwargs):
-        try:
-            agent = Agent.objects.get(pk=kwargs['pk'])
-        except Agent.DoesNotExist:
-            return Response({'detail': 'Agent not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = AgentSerializer(agent, data=request.data)
-        if serializer.is_valid():
-            agent = serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def get(self, request, *args, **kwargs):
-        agents = Agent.objects.all()
-        serializer = AgentSerializer(agents, many=True)
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 

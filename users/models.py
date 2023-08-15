@@ -19,6 +19,7 @@ class Agent(DatedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=100)
     email = models.EmailField()
+    whatsapp_num = models.CharField(max_length=20, null=True, blank=True)
     phone_number = models.CharField(max_length=20)
     bio = models.TextField()
     nationality = models.CharField(max_length=50)

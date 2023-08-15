@@ -18,10 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from property.views import CountryViewSet, CityViewSet, PropertyViewSet, AreaViewSet
-from users.views import LoginView, RegisterView, UserViewSet, AgentView
+from users.views import LoginView, RegisterView, UserViewSet, AgentViewSet
 from company.views import CompanyViewSet, CustomUserViewSet, CompanyAgentViewSet
 router = routers.DefaultRouter()
 router.register(r'api/v1/user', UserViewSet, basename='user')
+router.register(r'api/v1/agent', AgentViewSet, basename='agent')
 router.register(r'api/v1/countries', CountryViewSet, basename='country')
 router.register(r'api/v1/cities', CityViewSet, basename='city')
 router.register(r'api/v1/area', AreaViewSet, basename='area')
@@ -35,6 +36,6 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path('api/v1/auth/login/', LoginView.as_view(), name="login_api"),
     path('api/v1/auth/register/', RegisterView.as_view(), name="register_api"),
-    path('api/v1/auth/register/agent-list/', AgentView.as_view(), name="register_api")
+    # path('api/v1/auth/register/agent-list/', AgentView.as_view(), name="register_api")
 ]
 
