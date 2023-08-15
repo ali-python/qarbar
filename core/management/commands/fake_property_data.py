@@ -66,7 +66,7 @@ class Command(BaseCommand):
                 built_in_wardrobes=fake.boolean(),
                 kitchen_appliances=fake.boolean(),
                 lower_portion=fake.boolean(),
-                Farmhouse=fake.boolean(),
+                farmhouse=fake.boolean(),
                 electricity_backup=fake.boolean(),
                 furnished_unfurnished=fake.boolean(),
                 covered_parking=fake.boolean(),

@@ -195,13 +195,14 @@ class AgentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
     password = serializers.CharField(source='user.password')
     email = serializers.CharField(source='user.email')
-    phone_number = serializers.CharField(source='user.userprofile.phone_number')
     first_name = serializers.CharField(source='user.first_name', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
     name = serializers.CharField(max_length=128, required=True)
     bio = serializers.CharField(required=True)
     nationality = serializers.CharField(max_length=50, required=True)
     languages = serializers.CharField(max_length=200, required=True)
+    phone_number = serializers.CharField(max_length=200, required=True)
+    whatsapp_num = serializers.CharField(max_length=200, required=True)
     areas = serializers.CharField(max_length=200, required=True)
     experience_since = serializers.DateField(required=True)
 
@@ -234,7 +235,7 @@ class AgentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Agent
         fields = (
-            'username', 'password', 'email', 'phone_number',
+            'username', 'password', 'email', 'phone_number', 'whatsapp_num',
             'first_name', 'last_name', 'name', 'bio',
             'nationality', 'languages', 'areas', 'experience_since'
         )
