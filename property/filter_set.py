@@ -11,7 +11,7 @@ class PropertyFilter(filters.FilterSet):
     total_price = django_filters.NumberFilter(lookup_expr='exact')
     min_price = django_filters.NumberFilter(field_name='total_price', lookup_expr='gte')
     max_price = django_filters.NumberFilter(field_name='total_price', lookup_expr='lte')
-    property_type__size = django_filters.NumberFilter(lookup_expr='exact')
+    size = django_filters.NumberFilter(lookup_expr='exact')
     min_size = django_filters.NumberFilter(field_name='property_type__size', lookup_expr='gte')
     max_size = django_filters.NumberFilter(field_name='property_type__size', lookup_expr='lte')
     rent_sale_type = django_filters.ChoiceFilter(choices=Property.R_S_TYPES)
