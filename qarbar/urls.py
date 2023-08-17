@@ -20,6 +20,7 @@ from rest_framework import routers
 from property.views import CountryViewSet, CityViewSet, PropertyViewSet, AreaViewSet
 from users.views import LoginView, RegisterView, UserViewSet, AgentViewSet
 from company.views import CompanyViewSet, CustomUserViewSet, CompanyAgentViewSet
+from news.views import NewsViewSet
 router = routers.DefaultRouter()
 router.register(r'api/v1/user', UserViewSet, basename='user')
 router.register(r'api/v1/agent', AgentViewSet, basename='agent')
@@ -30,6 +31,7 @@ router.register(r'api/v1/properties', PropertyViewSet, basename='property')
 router.register(r'api/v1/companies', CompanyViewSet, basename='company')
 router.register(r'api/v1/custom/company/users', CustomUserViewSet, basename='customuserscompany')
 router.register(r'api/v1/company/agents', CompanyAgentViewSet, basename='agents_company')
+router.register(r'api/v1/news', NewsViewSet, basename='news')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
