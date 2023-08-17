@@ -5,13 +5,11 @@ from users.models import Agent
 from company.models import CompanyAgent
 from core.models import DatedModel
 from property.models import (
-    PropertyAmenties,
     City, 
     Country, 
     PropertyTypes, 
     PropertyInstallment, 
     PropertyLocation, 
-    Media
 )
 
 class PorjectAmenities(DatedModel):
