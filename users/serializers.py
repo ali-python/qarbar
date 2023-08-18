@@ -2,40 +2,10 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-
+from .models import UserProfile
 from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-from . models import Agent, UserProfile
-
-class UserSerializer(serializers.ModelSerializer):
-    phone_number = serializers.CharField(source='userprofile.phone_number', allow_null=True)
-    dob = serializers.DateField(source='userprofile.dob', allow_null=True)
-    city = serializers.CharField(source='userprofile.city', allow_null=True)
-    country = serializers.CharField(source='userprofile.country', allow_null=True)
-    address = serializers.CharField(source='userprofile.address', allow_null=True)
-    is_agent = serializers.SerializerMethodField()
-    class Meta:
-        model = User
-        fields = [
-            'id',
-            'first_name',
-            'last_name',
-            'username',
-            'email',
-            'phone_number',
-            'address',
-            'dob',
-            'city',
-            'country',
-            'is_staff',
-            'is_agent'
-        ]
-        read_only_fields = ['id', 'username', 'is_staff', 'is_agent']
-
-    def get_is_agent(self, obj):
-        agent_user = Agent.objects.filter(user=obj).exists()
-        return agent_user
-    
+  
 class AuthTokenCustomSerializer(AuthTokenSerializer):
     def validate(self, attrs):
         username = attrs.get('username')
@@ -57,7 +27,6 @@ class AuthTokenCustomSerializer(AuthTokenSerializer):
 
         attrs['user'] = user
         return attrs
-
 
 class RegisterSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=128, required=True)
@@ -119,7 +88,6 @@ class RegisterSerializer(serializers.Serializer):
         user.userprofile.save()
         return user
 
-
 class UpdateUserSerializer(serializers.Serializer):
     first_name = serializers.CharField(allow_null=True, allow_blank=True)
     last_name = serializers.CharField(allow_null=True, allow_blank=True)
@@ -164,85 +132,47 @@ class UpdateUserSerializer(serializers.Serializer):
         user.userprofile.save()
 
         return user
-    
-# class AgentSerializer(RegisterSerializer):
-#     name = serializers.CharField(max_length=128, required=True)
-#     bio = serializers.CharField(required=True)
-#     nationality = serializers.CharField(max_length=50, required=True)
-#     languages = serializers.CharField(max_length=200, required=True)
-#     areas = serializers.CharField(max_length=200, required=True)
-#     experience_since = serializers.DateField(required=True)
 
-#     def create(self, validated_data):
-#         user = super().create(validated_data)  # Call the parent create method to create the user
-
-#         agent = Agent.objects.create(
-#             user=user,
-#             name=validated_data.get('name'),
-#             bio=validated_data.get('bio'),
-#             phone_number=validated_data.get('phone_number'),
-#             email=validated_data.get('email'),
-#             nationality=validated_data.get('nationality'),
-#             languages=validated_data.get('languages'),
-#             areas=validated_data.get('areas'),
-#             experience_since=validated_data.get('experience_since')
-#         )
-
-#         return agent
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ('phone_number', 'dob', 'city', 'country', 'address')
 
 
-class AgentSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username')
-    password = serializers.CharField(source='user.password')
-    email = serializers.CharField(source='user.email')
-    first_name = serializers.CharField(source='user.first_name', read_only=True)
-    last_name = serializers.CharField(source='user.last_name', read_only=True)
-    name = serializers.CharField(max_length=128, required=True)
-    bio = serializers.CharField(required=True)
-    nationality = serializers.CharField(max_length=50, required=True)
-    languages = serializers.CharField(max_length=200, required=True)
-    phone_number = serializers.CharField(max_length=200, required=True)
-    whatsapp_num = serializers.CharField(max_length=200, required=True)
-    areas = serializers.CharField(max_length=200, required=True)
-    experience_since = serializers.DateField(required=True)
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        user_data = {
-            'username': validated_data['user']['username'],
-            'password': validated_data['user']['password'],
-            'email': validated_data['user']['email'],
-            'first_name': '',
-            'last_name': '',
-        }
-        user_profile_data = {
-            'phone_number': validated_data['user']['userprofile']['phone_number'],
-        }
-        agent_data = {
-            'name': validated_data['name'],
-            'bio': validated_data['bio'],
-            'nationality': validated_data['nationality'],
-            'languages': validated_data['languages'],
-            'areas': validated_data['areas'],
-            'experience_since': validated_data['experience_since'],
-        }
+        password = validated_data.pop('password')
+        user = User.objects.create(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
 
-        user = User.objects.create(**user_data)
-        UserProfile.objects.create(user=user, **user_profile_data)
-        agent = Agent.objects.create(user=user, **agent_data)
+from rest_framework import serializers
+from django.contrib.auth.models import User
+from .models import Agent
+from .serializers import UserSerializer, UserProfileSerializer
 
-        return agent
+class AgentSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
 
     class Meta:
         model = Agent
         fields = (
-            'username', 'password', 'email', 'phone_number', 'whatsapp_num',
-            'first_name', 'last_name', 'name', 'bio',
-            'nationality', 'languages', 'areas', 'experience_since'
+            'name', 'whatsapp_num', 'phone_number', 'bio',
+            'nationality', 'languages', 'areas', 'experience_since', 'user'
         )
 
-
-
-
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user = UserSerializer().create(validated_data=user_data)
+        
+        agent = Agent.objects.create(user=user, **validated_data)
+        return agent
 
 
 
