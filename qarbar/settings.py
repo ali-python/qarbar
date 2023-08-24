@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'property',
     'company',
     'news',
+    'new_projects',
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
