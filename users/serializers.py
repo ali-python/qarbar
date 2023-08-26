@@ -5,7 +5,10 @@ from django.contrib.auth.models import User
 from .models import UserProfile
 from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-  
+from django.contrib.auth.models import User
+from .models import Agent
+from .serializers import UserSerializer, UserProfileSerializer
+
 class AuthTokenCustomSerializer(AuthTokenSerializer):
     def validate(self, attrs):
         username = attrs.get('username')
@@ -152,18 +155,13 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-from rest_framework import serializers
-from django.contrib.auth.models import User
-from .models import Agent
-from .serializers import UserSerializer, UserProfileSerializer
-
 class AgentSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
     class Meta:
         model = Agent
         fields = (
-            'name', 'whatsapp_num', 'phone_number', 'bio',
+            'id','name', 'whatsapp_num', 'phone_number', 'bio',
             'nationality', 'languages', 'areas', 'experience_since', 'user'
         )
 

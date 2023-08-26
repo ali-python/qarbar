@@ -102,6 +102,7 @@ class CityViewSet(viewsets.ViewSet):
     
 
 class AreaViewSet(viewsets.ViewSet):
+    permission_classes = []
     def list(self, request):
         queryset = Area.objects.all()
         serializer = AreaSerializer(queryset, many=True)
@@ -182,10 +183,11 @@ class PropertyViewSet(
         property = self.get_object()
         serializer = PropertySerializer(property)
         return Response(serializer.data)
-
+    
     @action(detail=False, methods=['POST'])
     def create_property(self, request):
         if self.request.user:
+            print("Request Data:", request.data)
             serializer = CreatePropertySerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
                 property = serializer.save()
