@@ -52,6 +52,7 @@ class AmentiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = PropertyAmenties
         fields = '__all__'
+        allow_null = True
 
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -65,7 +66,7 @@ class CustomDateField(serializers.ReadOnlyField):
 class PropertySerializer(serializers.ModelSerializer):
     media = MediaSerializer(many=True, read_only=True, source='property_media')
     area = AreaSerializer(read_only=True)
-    amenties = AmentiesSerializer(read_only=True)
+    amenties = AmentiesSerializer(read_only=True, allow_null = True)
     property_location = PropertyLocationSerializer(read_only=True)
     property_type = PropertyTypesSerializer(read_only=True)
     installment = InstallmentSerializer(read_only=True)
@@ -108,7 +109,7 @@ class CreatePropertySerializer(serializers.ModelSerializer):
         ),
         required=True
     )
-    amenties = AmentiesSerializer()
+    amenties = AmentiesSerializer(allow_null=True)
     property_type = PropertyTypesSerializer()
     property_location = PropertyLocationSerializer()
     installment = InstallmentSerializer()
@@ -119,25 +120,28 @@ class CreatePropertySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         media_data = validated_data.pop('media')
-
-        # Create related models first and then assign them to the main instance
         amenties_data = validated_data.pop('amenties', None)
         property_type_data = validated_data.pop('property_type', None)
         property_location_data = validated_data.pop('property_location', None)
         installment_data = validated_data.pop('installment', None)
 
         property = Property.objects.create(**validated_data)
-
-        # Handle nested objects
         if amenties_data:
-            PropertyAmenties.objects.create(property=property, **amenties_data)
+            pa=PropertyAmenties.objects.create(property=property, **amenties_data)
+            property.amenties=pa
+            property.save()
         if property_type_data:
-            PropertyTypes.objects.create(property=property, **property_type_data)
+            pt=PropertyTypes.objects.create(property=property, **property_type_data)
+            property.property_type=pt
+            property.save()
         if property_location_data:
-            PropertyLocation.objects.create(property=property, **property_location_data)
+            pl=PropertyLocation.objects.create(property=property, **property_location_data)
+            property.property_location=pl
+            property.save()
         if installment_data:
-            PropertyInstallment.objects.create(property=property, **installment_data)
-
+            pi=PropertyInstallment.objects.create(property=property, **installment_data)
+            property.installment=pi
+            property.save()
         for media in media_data:
             Media.objects.create(property=property, **media)
 
