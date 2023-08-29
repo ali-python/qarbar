@@ -109,10 +109,10 @@ class CreatePropertySerializer(serializers.ModelSerializer):
         ),
         required=True
     )
-    amenties = AmentiesSerializer(allow_null=True)
-    property_type = PropertyTypesSerializer()
-    property_location = PropertyLocationSerializer()
-    installment = InstallmentSerializer()
+    amenties = AmentiesSerializer(allow_null=True, required=False)
+    property_type = PropertyTypesSerializer(allow_null=True, required=False)
+    property_location = PropertyLocationSerializer(allow_null=True, required=False)
+    installment = InstallmentSerializer(allow_null=True, required=False)
 
     class Meta:
         model = Property
