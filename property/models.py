@@ -31,8 +31,8 @@ class Area(DatedModel):
 class PropertyAmenties(models.Model):
     other_nearby_palces = models.CharField(max_length=250, null=True, blank=True)
     bedrooms = models.IntegerField(default=1, null=True, blank=True)
-    distance_from_airport = models.IntegerField(null=True, blank=True)
-    built_in_year = models.IntegerField(null=True, blank=True)
+    distance_from_airport = models.IntegerField(default=0, null=True, blank=True)
+    built_in_year = models.IntegerField(default=0, null=True, blank=True)
     bathrooms = models.IntegerField(default=1,null=True, blank=True)
     kitchen = models.IntegerField(default=0,null=True, blank=True)
     floors = models.IntegerField(default=0,null=True, blank=True)
