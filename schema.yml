@@ -1,0 +1,2266 @@
+openapi: 3.0.3
+info:
+  title: Your Project API
+  version: 1.0.0
+  description: Your project description
+paths:
+  /api/v1/agent/:
+    get:
+      operationId: v1_agent_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAgentList'
+          description: ''
+    post:
+      operationId: v1_agent_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Agent'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Agent'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+          description: ''
+  /api/v1/agent/{id}/:
+    get:
+      operationId: v1_agent_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agent.
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+          description: ''
+    put:
+      operationId: v1_agent_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agent.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Agent'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Agent'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Agent'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+          description: ''
+    patch:
+      operationId: v1_agent_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agent.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAgent'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAgent'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAgent'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+          description: ''
+    delete:
+      operationId: v1_agent_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this agent.
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/area/:
+    get:
+      operationId: v1_area_retrieve
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: v1_area_create
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/area/{id}/:
+    get:
+      operationId: v1_area_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: v1_area_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_area_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/login/:
+    post:
+      operationId: v1_auth_login_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthTokenCustom'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthTokenCustom'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthTokenCustom'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokenCustom'
+          description: ''
+  /api/v1/auth/register/:
+    post:
+      operationId: v1_auth_register_create
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/cities/:
+    get:
+      operationId: v1_cities_retrieve
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: v1_cities_create
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/cities/{id}/:
+    get:
+      operationId: v1_cities_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: v1_cities_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_cities_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/companies/:
+    get:
+      operationId: v1_companies_retrieve
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: v1_companies_create
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/companies/{id}/:
+    get:
+      operationId: v1_companies_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: v1_companies_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_companies_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/company/agents/:
+    get:
+      operationId: v1_company_agents_retrieve
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: v1_company_agents_create
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/company/agents/{id}/:
+    get:
+      operationId: v1_company_agents_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: v1_company_agents_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_company_agents_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/countries/:
+    get:
+      operationId: v1_countries_retrieve
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: v1_countries_create
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/countries/{id}/:
+    get:
+      operationId: v1_countries_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: v1_countries_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_countries_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/custom/company/users/:
+    get:
+      operationId: v1_custom_company_users_retrieve
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: v1_custom_company_users_create
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/custom/company/users/{id}/:
+    get:
+      operationId: v1_custom_company_users_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: v1_custom_company_users_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: v1_custom_company_users_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/new/projects/:
+    get:
+      operationId: v1_new_projects_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProjectsList'
+          description: ''
+  /api/v1/new/projects/{id}/:
+    get:
+      operationId: v1_new_projects_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this projects.
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projects'
+          description: ''
+    delete:
+      operationId: v1_new_projects_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this projects.
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/new/projects/{id}/detail_property/:
+    get:
+      operationId: v1_new_projects_detail_property_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this projects.
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projects'
+          description: ''
+  /api/v1/new/projects/agent_properties/:
+    get:
+      operationId: v1_new_projects_agent_properties_retrieve
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projects'
+          description: ''
+  /api/v1/new/projects/create_property/:
+    post:
+      operationId: v1_new_projects_create_property_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Projects'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Projects'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Projects'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Projects'
+          description: ''
+  /api/v1/news/:
+    get:
+      operationId: v1_news_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNewsList'
+          description: ''
+    post:
+      operationId: v1_news_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/News'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/News'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/News'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+          description: ''
+  /api/v1/news/{id}/:
+    get:
+      operationId: v1_news_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news.
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+          description: ''
+    put:
+      operationId: v1_news_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/News'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/News'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/News'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+          description: ''
+    patch:
+      operationId: v1_news_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNews'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNews'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNews'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+          description: ''
+    delete:
+      operationId: v1_news_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this news.
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/properties/:
+    get:
+      operationId: v1_properties_list
+      description: This endpoint returns a list of all properties, also it have create
+        property  detail of property and update property in the system.
+      summary: Get a list of all properties, and create , update and detail of property
+      parameters:
+      - in: query
+        name: agent__name
+        schema:
+          type: string
+      - in: query
+        name: baths
+        schema:
+          type: array
+          items:
+            type: integer
+            nullable: true
+        explode: true
+        style: form
+      - in: query
+        name: beds
+        schema:
+          type: array
+          items:
+            type: integer
+            nullable: true
+        explode: true
+        style: form
+      - in: query
+        name: cities
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+        style: form
+      - in: query
+        name: commercial_types
+        schema:
+          type: string
+      - in: query
+        name: company_agent__name
+        schema:
+          type: string
+      - in: query
+        name: countries
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+        style: form
+      - in: query
+        name: home_types
+        schema:
+          type: string
+      - in: query
+        name: max_price
+        schema:
+          type: integer
+      - in: query
+        name: max_size
+        schema:
+          type: integer
+      - in: query
+        name: min_price
+        schema:
+          type: integer
+      - in: query
+        name: min_size
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: plot_types
+        schema:
+          type: string
+      - in: query
+        name: rent_sale_type
+        schema:
+          type: string
+          nullable: true
+          enum:
+          - rent
+          - sale
+        description: |-
+          * `rent` - Rent
+          * `sale` - Sale
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: size
+        schema:
+          type: number
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: total_price
+        schema:
+          type: integer
+      - in: query
+        name: unit_type
+        schema:
+          type: string
+      tags:
+      - Property
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPropertyList'
+          description: ''
+  /api/v1/properties/{id}/:
+    get:
+      operationId: v1_properties_retrieve
+      description: This endpoint returns a list of all properties, also it have create
+        property  detail of property and update property in the system.
+      summary: Get a list of all properties, and create , update and detail of property
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this property.
+        required: true
+      tags:
+      - Property
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+    delete:
+      operationId: v1_properties_destroy
+      description: This endpoint returns a list of all properties, also it have create
+        property  detail of property and update property in the system.
+      summary: Get a list of all properties, and create , update and detail of property
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this property.
+        required: true
+      tags:
+      - Property
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/properties/{id}/detail_property/:
+    get:
+      operationId: v1_properties_detail_property_retrieve
+      description: This endpoint returns a list of all properties, also it have create
+        property  detail of property and update property in the system.
+      summary: Get a list of all properties, and create , update and detail of property
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this property.
+        required: true
+      tags:
+      - Property
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+  /api/v1/properties/agent_properties/:
+    get:
+      operationId: v1_properties_agent_properties_retrieve
+      description: This endpoint returns a list of all properties, also it have create
+        property  detail of property and update property in the system.
+      summary: Get a list of all properties, and create , update and detail of property
+      tags:
+      - Property
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+  /api/v1/properties/create_property/:
+    post:
+      operationId: v1_properties_create_property_create
+      description: This endpoint returns a list of all properties, also it have create
+        property  detail of property and update property in the system.
+      summary: Get a list of all properties, and create , update and detail of property
+      tags:
+      - Property
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Property'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Property'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Property'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+  /api/v1/user/:
+    get:
+      operationId: v1_user_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+          description: ''
+  /api/v1/user/{id}/:
+    get:
+      operationId: v1_user_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - v1
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: v1_user_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: v1_user_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/user/update_user_details/:
+    post:
+      operationId: v1_user_update_user_details_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+components:
+  schemas:
+    Agent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        whatsapp_num:
+          type: string
+          nullable: true
+          maxLength: 20
+        phone_number:
+          type: string
+          maxLength: 20
+        bio:
+          type: string
+        nationality:
+          type: string
+          maxLength: 50
+        languages:
+          type: string
+          maxLength: 200
+        areas:
+          type: string
+          maxLength: 200
+        experience_since:
+          type: string
+          format: date
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+      - areas
+      - bio
+      - id
+      - languages
+      - name
+      - nationality
+      - phone_number
+      - user
+    Amenties:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        other_nearby_palces:
+          type: string
+          nullable: true
+          maxLength: 250
+        bedrooms:
+          type: integer
+          nullable: true
+        distance_from_airport:
+          type: integer
+          nullable: true
+        built_in_year:
+          type: integer
+          nullable: true
+        bathrooms:
+          type: integer
+          nullable: true
+        kitchen:
+          type: integer
+          nullable: true
+        floors:
+          type: integer
+          nullable: true
+        maid_room:
+          type: boolean
+          nullable: true
+        built_in_wardrobes:
+          type: boolean
+          nullable: true
+        kitchen_appliances:
+          type: boolean
+          nullable: true
+        balcony:
+          type: boolean
+          nullable: true
+        lower_portion:
+          type: boolean
+          nullable: true
+        farmhouse:
+          type: boolean
+          nullable: true
+        electricity_backup:
+          type: boolean
+          nullable: true
+        furnished_unfurnished:
+          type: boolean
+          nullable: true
+        covered_parking:
+          type: boolean
+          nullable: true
+        lobby_in_building:
+          type: boolean
+          nullable: true
+        security:
+          type: boolean
+          nullable: true
+        parking_space:
+          type: boolean
+          nullable: true
+        drawing_room:
+          type: boolean
+          nullable: true
+        study_room:
+          type: boolean
+          nullable: true
+        laundry_room:
+          type: boolean
+          nullable: true
+        store_room:
+          type: boolean
+          nullable: true
+        gym:
+          type: boolean
+          nullable: true
+        lounge_sitting_area:
+          type: boolean
+          nullable: true
+        internet:
+          type: boolean
+          nullable: true
+        swimming_pool:
+          type: boolean
+          nullable: true
+        mosque:
+          type: boolean
+          nullable: true
+        kids_play_area:
+          type: boolean
+          nullable: true
+        medical_center:
+          type: boolean
+          nullable: true
+        community_lawn_garden:
+          type: boolean
+          nullable: true
+        near_by_school:
+          type: boolean
+          nullable: true
+        near_by_hospital:
+          type: boolean
+          nullable: true
+        near_by_shopping_mall:
+          type: boolean
+          nullable: true
+        other_description:
+          type: string
+          nullable: true
+          maxLength: 350
+      required:
+      - id
+    Area:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        city:
+          allOf:
+          - $ref: '#/components/schemas/City'
+          readOnly: true
+        area:
+          type: string
+          maxLength: 200
+      required:
+      - area
+      - city
+      - id
+    AuthTokenCustom:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        token:
+          type: string
+          readOnly: true
+      required:
+      - password
+      - token
+      - username
+    BlankEnum:
+      enum:
+      - ''
+    City:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/Country'
+          readOnly: true
+        city_name:
+          type: string
+          maxLength: 100
+        city_code:
+          type: string
+          maxLength: 10
+      required:
+      - city_code
+      - city_name
+      - country
+      - id
+    CommercialTypesEnum:
+      enum:
+      - 'null'
+      - office
+      - shop
+      - warehouse
+      - factory
+      - building
+      - other
+      type: string
+      description: |-
+        * `null` - Null
+        * `office` - Office
+        * `shop` - Shop
+        * `warehouse` - WareHouse
+        * `factory` - Factory
+        * `building` - Building
+        * `other` - other
+    Company:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        address:
+          type: string
+          maxLength: 200
+      required:
+      - address
+      - description
+      - id
+      - name
+    CompanyAgent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        company:
+          allOf:
+          - $ref: '#/components/schemas/Company'
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/CustomUser'
+          readOnly: true
+      required:
+      - company
+      - id
+      - user
+    Country:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        country_name:
+          type: string
+          maxLength: 100
+        country_code:
+          type: string
+          maxLength: 10
+      required:
+      - country_code
+      - country_name
+      - id
+    CustomUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        password:
+          type: string
+          maxLength: 128
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        date_joined:
+          type: string
+          format: date-time
+        is_company:
+          type: boolean
+        groups:
+          type: array
+          items:
+            type: integer
+          description: The groups this user belongs to. A user will get all permissions
+            granted to each of their groups.
+        user_permissions:
+          type: array
+          items:
+            type: integer
+          description: Specific permissions for this user.
+      required:
+      - id
+      - password
+      - username
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 100
+        pdf_file:
+          type: string
+          format: uri
+      required:
+      - id
+      - pdf_file
+      - title
+    HomeTypesEnum:
+      enum:
+      - 'null'
+      - house
+      - flat
+      - upper_portion
+      - lower_portion
+      - farm_house
+      - room
+      - pent_house
+      type: string
+      description: |-
+        * `null` - Null
+        * `house` - House
+        * `flat` - Flat
+        * `upper_portion` - Uper Portion
+        * `lower_portion` - Lower Portion
+        * `farm_house` - Farm House
+        * `room` - Room
+        * `pent_house` - Pent House
+    Installment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        advance_amount:
+          type: integer
+          nullable: true
+        no_of_inst:
+          type: integer
+          nullable: true
+        monthly_inst:
+          type: integer
+          nullable: true
+        ready_for_possession:
+          type: boolean
+          nullable: true
+      required:
+      - id
+    Media:
+      type: object
+      properties:
+        image_url:
+          type: string
+          maxLength: 250
+        media_type:
+          $ref: '#/components/schemas/MediaTypeEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - created_at
+      - image_url
+      - updated_at
+    MediaTypeEnum:
+      enum:
+      - image
+      - Video
+      type: string
+      description: |-
+        * `image` - Image
+        * `Video` - Video
+    News:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        title:
+          type: string
+          maxLength: 200
+        news_image:
+          type: string
+          format: uri
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - date
+      - description
+      - id
+      - news_image
+      - title
+      - updated_at
+    NullEnum:
+      enum:
+      - null
+    PaginatedAgentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agent'
+    PaginatedNewsList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/News'
+    PaginatedProjectsList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Projects'
+    PaginatedPropertyList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
+    PaginatedUserList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PatchedAgent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        whatsapp_num:
+          type: string
+          nullable: true
+          maxLength: 20
+        phone_number:
+          type: string
+          maxLength: 20
+        bio:
+          type: string
+        nationality:
+          type: string
+          maxLength: 50
+        languages:
+          type: string
+          maxLength: 200
+        areas:
+          type: string
+          maxLength: 200
+        experience_since:
+          type: string
+          format: date
+        user:
+          $ref: '#/components/schemas/User'
+    PatchedNews:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        title:
+          type: string
+          maxLength: 200
+        news_image:
+          type: string
+          format: uri
+        description:
+          type: string
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedUser:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+    PlotTypesEnum:
+      enum:
+      - 'null'
+      - residetial_plot
+      - commercial_plot
+      - agricultural_land
+      - Industrial_land
+      - plot_file
+      - plot_form
+      type: string
+      description: |-
+        * `null` - Null
+        * `residetial_plot` - Residential Plot
+        * `commercial_plot` - Commercial Plot
+        * `agricultural_land` - Agricultural Land
+        * `Industrial_land` - Industrial_Land
+        * `plot_file` - Plot File
+        * `plot_form` - Plot Form
+    PorjectAmenities:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        gymnasium:
+          type: boolean
+        swimming_pool:
+          type: boolean
+        infinity_pool:
+          type: boolean
+        childerns_play_area:
+          type: boolean
+        restaurant:
+          type: boolean
+        leisure_lounge:
+          type: boolean
+        retial_shop_outlet:
+          type: boolean
+        near_by_hospital:
+          type: boolean
+        near_by_school:
+          type: boolean
+        near_by_shpping_mall:
+          type: boolean
+        near_by_super_market:
+          type: boolean
+      required:
+      - created_at
+      - id
+      - updated_at
+    ProjectBed:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        unit_type:
+          $ref: '#/components/schemas/UnitType'
+        layout_type:
+          type: string
+          maxLength: 50
+        bed_size:
+          type: string
+          maxLength: 20
+        floor_plan_img:
+          type: string
+          format: uri
+          nullable: true
+      required:
+      - bed_size
+      - id
+      - layout_type
+      - unit_type
+    Projects:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        brochure_document:
+          $ref: '#/components/schemas/Document'
+        available_units:
+          $ref: '#/components/schemas/ProjectBed'
+        amenities:
+          $ref: '#/components/schemas/PorjectAmenities'
+        agent:
+          $ref: '#/components/schemas/Agent'
+        company_agent:
+          $ref: '#/components/schemas/CompanyAgent'
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        developer_name:
+          type: string
+          maxLength: 250
+        title:
+          type: string
+          maxLength: 200
+        delivery_date:
+          type: string
+          format: date
+        status:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+          maxLength: 400
+        total_price:
+          type: integer
+          nullable: true
+        date:
+          type: string
+          format: date
+        property_type:
+          type: integer
+          nullable: true
+        property_location:
+          type: integer
+          nullable: true
+        city:
+          type: integer
+          nullable: true
+        country:
+          type: integer
+          nullable: true
+        installment:
+          type: integer
+          nullable: true
+      required:
+      - agent
+      - amenities
+      - available_units
+      - brochure_document
+      - company_agent
+      - created_at
+      - developer_name
+      - id
+      - title
+      - updated_at
+    Property:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          nullable: true
+          maxLength: 200
+        media:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+          readOnly: true
+        rent_sale_type:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/RentSaleTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        area:
+          allOf:
+          - $ref: '#/components/schemas/Area'
+          readOnly: true
+        agent:
+          allOf:
+          - $ref: '#/components/schemas/Agent'
+          readOnly: true
+        company_agent:
+          allOf:
+          - $ref: '#/components/schemas/CompanyAgent'
+          readOnly: true
+        amenties:
+          allOf:
+          - $ref: '#/components/schemas/Amenties'
+          readOnly: true
+          nullable: true
+        property_location:
+          allOf:
+          - $ref: '#/components/schemas/PropertyLocation'
+          readOnly: true
+        property_type:
+          allOf:
+          - $ref: '#/components/schemas/PropertyTypes'
+          readOnly: true
+        installment:
+          allOf:
+          - $ref: '#/components/schemas/Installment'
+          readOnly: true
+        available:
+          type: boolean
+        date:
+          type: string
+          format: date
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+          maxLength: 200
+        total_price:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - agent
+      - amenties
+      - area
+      - company_agent
+      - created_at
+      - date
+      - id
+      - installment
+      - media
+      - property_location
+      - property_type
+      - updated_at
+    PropertyLocation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,6})?$
+          nullable: true
+      required:
+      - id
+    PropertyTypes:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        plot_types:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/PlotTypesEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        home_types:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/HomeTypesEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        commercial_types:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/CommercialTypesEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        unit_types:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/UnitTypesEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        size:
+          type: integer
+          nullable: true
+        other_description:
+          type: string
+          nullable: true
+          maxLength: 250
+      required:
+      - id
+    RentSaleTypeEnum:
+      enum:
+      - rent
+      - sale
+      type: string
+      description: |-
+        * `rent` - Rent
+        * `sale` - Sale
+    UnitType:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        bed_count:
+          type: integer
+        size:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+      required:
+      - bed_count
+      - id
+      - name
+      - size
+    UnitTypesEnum:
+      enum:
+      - 'null'
+      - marla
+      - sqft
+      - sqm
+      - sqyd
+      - kanal
+      type: string
+      description: |-
+        * `null` - Null
+        * `marla` - Marla
+        * `sqft` - Sq.Ft.
+        * `sqm` - Sq.M.
+        * `sqyd` - Sq.Yd.
+        * `kanal` - Kanal
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+      required:
+      - password
+      - username
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

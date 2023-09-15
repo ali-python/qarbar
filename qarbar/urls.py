@@ -15,13 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 from property.views import CountryViewSet, CityViewSet, PropertyViewSet, AreaViewSet
 from users.views import LoginView, RegisterView, UserViewSet, AgentViewSet
 from company.views import CompanyViewSet, CustomUserViewSet, CompanyAgentViewSet
 from news.views import NewsViewSet
 from new_projects.views import ProjectViewSet
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 router = routers.DefaultRouter()
 router.register(r'api/v1/user', UserViewSet, basename='user')
 router.register(r'api/v1/agent', AgentViewSet, basename='agent')
@@ -34,6 +37,20 @@ router.register(r'api/v1/custom/company/users', CustomUserViewSet, basename='cus
 router.register(r'api/v1/company/agents', CompanyAgentViewSet, basename='agents_company')
 router.register(r'api/v1/news', NewsViewSet, basename='news')
 router.register(r'api/v1/new/projects', ProjectViewSet, basename='projects')
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="QARBAR",
+        default_version="v1",
+        description="Qarbar API's ",
+        terms_of_service="http://13.127.231.16/",
+        contact=openapi.Contact(email="aliakber419@gmail.com"),
+        license=openapi.License(name="Qarbar License"),
+    ),
+    public=True,
+    permission_classes=(),
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
@@ -41,5 +58,15 @@ urlpatterns = [
     path('api/v1/auth/login/', LoginView.as_view(), name="login_api"),
     path('api/v1/auth/register/', RegisterView.as_view(), name="register_api"),
     # path('api/v1/auth/register/agent-list/', AgentView.as_view(), name="register_api")
+    # re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    # path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    # path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    # path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    # path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    # path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 

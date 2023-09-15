@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets, filters, permissions, status
 from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema
 from .models import Country, City, Property, Area
 from property.filter_set import PropertyFilter
 from users.serializers import AgentSerializer
@@ -142,6 +143,11 @@ class AreaViewSet(viewsets.ViewSet):
         area.delete()
         return Response(status=204)
 
+@extend_schema(
+    summary="Get a list of all properties, and create , update and detail of property",
+    description="This endpoint returns a list of all properties, also it have create property  detail of property and update property in the system.",
+    tags=["Property"],
+)
 
 class PropertyViewSet(
     viewsets.mixins.ListModelMixin,
