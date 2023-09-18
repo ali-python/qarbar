@@ -83,6 +83,17 @@ class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all()
     serializer_class = AgentSerializer
     permission_classes = []
+
+    def get_queryset(self):
+        return Agent.objects.all().order_by('-created_at')
     
     def perform_create(self, serializer):
         serializer.save()
+    
+    @action(detail=True, methods=['GET'])
+    def detail_agent(self, request, pk=None):
+        agent = self.get_object()
+        agent.views_count += 1  # Increment view count by 1
+        agent.save() 
+        serializer = AgentSerializer(agent)
+        return Response(serializer.data)

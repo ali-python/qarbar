@@ -146,6 +146,7 @@ class Property(DatedModel):
     available = models.BooleanField(default=True)
     description = models.CharField(max_length=200, null=True, blank=True)
     total_price = models.IntegerField(null=True, blank=True, default=0)
+    views_count = models.PositiveIntegerField(default=0)
     date = models.DateField(default=timezone.now)
 
     def __str__(self):

@@ -144,7 +144,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -161,7 +161,7 @@ class AgentSerializer(serializers.ModelSerializer):
         model = Agent
         fields = (
             'id','name', 'whatsapp_num', 'phone_number', 'bio',
-            'nationality', 'languages', 'areas', 'experience_since', 'user'
+            'nationality', 'languages', 'areas', 'experience_since', 'user', 'views_count'
         )
 
     def create(self, validated_data):
