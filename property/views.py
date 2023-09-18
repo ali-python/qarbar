@@ -181,6 +181,8 @@ class PropertyViewSet(
     @action(detail=True, methods=['GET'])
     def detail_property(self, request, pk=None):
         property = self.get_object()
+        property.views_count += 1  # Increment view count by 1
+        property.save() 
         serializer = PropertySerializer(property)
         return Response(serializer.data)
     

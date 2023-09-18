@@ -26,6 +26,7 @@ class Agent(DatedModel):
     languages = models.CharField(max_length=200)
     areas = models.CharField(max_length=200)
     experience_since = models.DateField(default=timezone.now)
+    views_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name

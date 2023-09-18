@@ -4,6 +4,10 @@ from users.serializers import AgentSerializer
 from company.serializers import CompanyAgentSerializer
 from users.models import Agent
 from company.models import CompanyAgent
+from PIL import Image, ImageDraw, ImageFont
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from io import BytesIO
+import requests
 from .models import (
     Country,
     City, 
@@ -92,6 +96,7 @@ class PropertySerializer(serializers.ModelSerializer):
             'date',
             'description',
             'total_price',
+            'views_count',
             'created_at',
             'updated_at',
         ]
@@ -142,8 +147,75 @@ class CreatePropertySerializer(serializers.ModelSerializer):
             pi=PropertyInstallment.objects.create(property=property, **installment_data)
             property.installment=pi
             property.save()
+        # for media in media_data:
+        #     Media.objects.create(property=property, **media)
+
+        # Watermark and save each image to the Media model
         for media in media_data:
-            Media.objects.create(property=property, **media)
+            image_url = media.get('image_url')
+            if image_url:
+                image_with_watermark = self.add_watermark(image_url)
+
+                # Create a Media instance with the watermarked image
+                media_instance = Media(property=property, media_type='image', image_url=image_url)
+                media_instance.save()
 
         return property
+
+    def add_watermark(self, image_url):
+        # Local path to save the downloaded watermark image
+        watermark_local_path = '/home/softbus/softwares/qarbar/news_images/watermark.png'  # Specify the full file path
+
+        # Download the watermark image content from the remote URL
+        watermark_url = 'https://robohash.org/hicveldicta.png'  # Replace with your watermark image URL
+        watermark_response = requests.get(watermark_url)
+
+        if watermark_response.status_code == 200:
+            # Create a bytes buffer from the downloaded watermark content
+            watermark_bytes = BytesIO(watermark_response.content)
+
+            # Save the watermark image locally
+            with open(watermark_local_path, 'wb') as f:
+                f.write(watermark_bytes.read())
+
+            # Download the media image content from the remote URL
+            media_response = requests.get(image_url)
+
+            if media_response.status_code == 200:
+                # Create a bytes buffer from the downloaded media content
+                media_bytes = BytesIO(media_response.content)
+
+                # Open the image and media from their bytes content
+                image = Image.open(media_bytes)
+                watermark = Image.open(watermark_local_path)
+
+                # Ensure both images have the same transparency mode (RGBA)
+                if image.mode != "RGBA":
+                    image = image.convert("RGBA")
+                if watermark.mode != "RGBA":
+                    watermark = watermark.convert("RGBA")
+
+                # Resize the watermark to fit the image
+                width, height = image.size
+                watermark = watermark.resize((int(width * 0.2), int(height * 0.2)))
+
+                # Paste the watermark on the image
+                image.paste(watermark, (width - watermark.width, height - watermark.height), watermark)
+
+                return image
+            else:
+                raise Exception("Failed to download media image from URL")
+        else:
+            raise Exception("Failed to download watermark image from URL")
+    def save_watermarked_image(self, watermarked_image, original_image_name):
+        # Convert the watermarked image to RGB mode (removing the alpha channel)
+        watermarked_image = watermarked_image.convert("RGB")
+
+        buffer = BytesIO()
+        watermarked_image.save(buffer, format='JPEG')
+        return InMemoryUploadedFile(buffer, None, original_image_name, 'image/jpeg', buffer.tell(), None)
+
+    def get_image_name(self, image_url):
+        # Extract the image name from the URL
+        return image_url.split('/')[-1]
 
