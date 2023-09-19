@@ -163,9 +163,6 @@ class CreatePropertySerializer(serializers.ModelSerializer):
         return property
 
     def add_watermark(self, image_url):
-        # Local path to save the downloaded watermark image
-        watermark_local_path = '/home/softbus/softwares/qarbar/news_images/watermark.png'  # Specify the full file path
-
         # Download the watermark image content from the remote URL
         watermark_url = 'https://robohash.org/hicveldicta.png'  # Replace with your watermark image URL
         watermark_response = requests.get(watermark_url)
@@ -173,10 +170,6 @@ class CreatePropertySerializer(serializers.ModelSerializer):
         if watermark_response.status_code == 200:
             # Create a bytes buffer from the downloaded watermark content
             watermark_bytes = BytesIO(watermark_response.content)
-
-            # Save the watermark image locally
-            with open(watermark_local_path, 'wb') as f:
-                f.write(watermark_bytes.read())
 
             # Download the media image content from the remote URL
             media_response = requests.get(image_url)
@@ -187,7 +180,7 @@ class CreatePropertySerializer(serializers.ModelSerializer):
 
                 # Open the image and media from their bytes content
                 image = Image.open(media_bytes)
-                watermark = Image.open(watermark_local_path)
+                watermark = Image.open(watermark_bytes)
 
                 # Ensure both images have the same transparency mode (RGBA)
                 if image.mode != "RGBA":
