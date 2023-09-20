@@ -163,7 +163,8 @@ class AgentSerializer(serializers.ModelSerializer):
         model = Agent
         fields = (
             'id','name', 'whatsapp_num', 'phone_number', 'bio',
-            'nationality', 'languages', 'areas', 'experience_since', 'user', 'views_count'
+            'nationality', 'languages', 'areas', 'experience_since', 'user', 'views_count',
+            'company_name','company_ntn','cnic','city','province','postal_code'
         )
 
     def create(self, validated_data):
