@@ -157,3 +157,10 @@ except ImportError:
 
 APPEND_SLASH = False
 
+AUTHENTICATION_BACKENDS = [
+    'users.backend_auth.EmailOrUsernameModelBackend',  # Replace 'users' with your app name if needed
+    'django.contrib.auth.backends.ModelBackend',  # Default authentication backend
+]
+
+
+

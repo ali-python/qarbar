@@ -6,7 +6,10 @@ from users.models import Agent
 from company.models import CompanyAgent
 from PIL import Image, ImageDraw, ImageFont
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from PIL import Image, UnidentifiedImageError
+from urllib.parse import urlparse 
 from io import BytesIO
+import base64
 import requests
 from .models import (
     Country,
@@ -106,6 +109,74 @@ class PropertySerializer(serializers.ModelSerializer):
             return AgentSerializer(agent).data
         else:
             return None
+    
+    
+    # def watermark_image(self, image_url):
+    #         # Fetch the original image
+    #         try:
+    #             media_response = requests.get(image_url)
+    #             media_response.raise_for_status()  # Raise an exception for non-200 status codes
+    #             media_bytes = BytesIO(media_response.content)
+    #             image = Image.open(media_bytes)
+    #         except requests.exceptions.RequestException as e:
+    #             raise Exception(f"Failed to download media image from URL: {e}")
+    #         except UnidentifiedImageError:
+    #             raise Exception("Invalid image format")
+
+    #         # Fetch the watermark image
+    #         watermark_url = 'https://meditech-products.s3-ap-northeast-1.amazonaws.com/WhatsApp%20Image%202023-09-15%20at%203.00.29%20PM.jpeg'  # Replace with your watermark image URL
+    #         try:
+    #             watermark_response = requests.get(watermark_url)
+    #             watermark_response.raise_for_status()  # Raise an exception for non-200 status codes
+    #             watermark_bytes = BytesIO(watermark_response.content)
+    #             watermark = Image.open(watermark_bytes)
+    #         except requests.exceptions.RequestException as e:
+    #             raise Exception(f"Failed to download watermark image from URL: {e}")
+    #         except UnidentifiedImageError:
+    #             raise Exception("Invalid watermark image format")
+
+    #         # Ensure both images have the same transparency mode (RGBA)
+    #         if image.mode != "RGBA":
+    #             image = image.convert("RGBA")
+    #         if watermark.mode != "RGBA":
+    #             watermark = watermark.convert("RGBA")
+
+    #         # Resize the watermark to fit the image
+    #         width, height = image.size
+    #         watermark = watermark.resize((int(width * 0.2), int(height * 0.2)))
+
+    #         # Paste the watermark on the image
+    #         image.paste(watermark, (width - watermark.width, height - watermark.height), watermark)
+
+    #         return image
+
+    # def to_representation(self, instance):
+    #     # Serialize the instance as usual
+    #     data = super().to_representation(instance)
+
+    #     # Check if there are media items
+    #     if 'media' in data and data['media']:
+    #         # Iterate over the media items and watermark the images
+    #         for media_item in data['media']:
+    #             image_url = media_item.get('image_url')
+    #             if image_url:
+    #                 try:
+    #                     # Call watermark_image method to get the watermarked image
+    #                     watermarked_image = self.watermark_image(image_url)
+
+    #                     # Convert the watermarked image to base64
+    #                     buffered = BytesIO()
+    #                     watermarked_image.save(buffered, format="PNG")
+    #                     base64_image = base64.b64encode(buffered.getvalue()).decode('utf-8')  # Convert to base64 and decode
+
+    #                     # Add the base64 watermarked image to the media item
+    #                     media_item['watermarked_image'] = base64_image
+    #                 except Exception as e:
+    #                     # Handle any exceptions that may occur during image processing
+    #                     media_item['watermarked_image_error'] = str(e)
+
+    #     return data
+
 
 class CreatePropertySerializer(serializers.ModelSerializer):
     media = serializers.ListSerializer(
@@ -147,68 +218,67 @@ class CreatePropertySerializer(serializers.ModelSerializer):
             pi=PropertyInstallment.objects.create(property=property, **installment_data)
             property.installment=pi
             property.save()
-        # for media in media_data:
-        #     Media.objects.create(property=property, **media)
-
-        # Watermark and save each image to the Media model
         for media in media_data:
-            image_url = media.get('image_url')
-            if image_url:
-                image_with_watermark = self.add_watermark(image_url)
+            Media.objects.create(property=property, **media)
 
-                # Create a Media instance with the watermarked image
-                media_instance = Media(property=property, media_type='image', image_url=image_url)
-                media_instance.save()
+            return property
 
-        return property
+    #     # Watermark and save each image to the Media model
+    #     for media in media_data:
+    #         image_url = media.get('image_url')
+    #         if image_url:
+    #             image_with_watermark = self.add_watermark(image_url)
 
-    def add_watermark(self, image_url):
-        # Download the watermark image content from the remote URL
-        watermark_url = 'https://robohash.org/hicveldicta.png'  # Replace with your watermark image URL
-        watermark_response = requests.get(watermark_url)
+    #             # Create a Media instance with the watermarked image
+    #             media_instance = Media(property=property, media_type='image', image_url=image_url)
+    #             media_instance.save()
 
-        if watermark_response.status_code == 200:
-            # Create a bytes buffer from the downloaded watermark content
-            watermark_bytes = BytesIO(watermark_response.content)
+    #     return property
 
-            # Download the media image content from the remote URL
-            media_response = requests.get(image_url)
+    # def add_watermark(self, image_url):
+    #     # Open the media image
+    #     media_response = requests.get(image_url)
 
-            if media_response.status_code == 200:
-                # Create a bytes buffer from the downloaded media content
-                media_bytes = BytesIO(media_response.content)
+    #     if media_response.status_code == 200:
+    #         media_bytes = BytesIO(media_response.content)
+    #         image = Image.open(media_bytes)
 
-                # Open the image and media from their bytes content
-                image = Image.open(media_bytes)
-                watermark = Image.open(watermark_bytes)
+    #         # Open the watermark image
+    #         watermark_url = 'https://meditech-products.s3-ap-northeast-1.amazonaws.com/WhatsApp%20Image%202023-09-15%20at%203.00.29%20PM.jpeg'  # Replace with your watermark image URL
+    #         watermark_response = requests.get(watermark_url)
 
-                # Ensure both images have the same transparency mode (RGBA)
-                if image.mode != "RGBA":
-                    image = image.convert("RGBA")
-                if watermark.mode != "RGBA":
-                    watermark = watermark.convert("RGBA")
+    #         if watermark_response.status_code == 200:
+    #             watermark_bytes = BytesIO(watermark_response.content)
+    #             watermark = Image.open(watermark_bytes)
 
-                # Resize the watermark to fit the image
-                width, height = image.size
-                watermark = watermark.resize((int(width * 0.2), int(height * 0.2)))
+    #             # Ensure both images have the same transparency mode (RGBA)
+    #             if image.mode != "RGBA":
+    #                 image = image.convert("RGBA")
 
-                # Paste the watermark on the image
-                image.paste(watermark, (width - watermark.width, height - watermark.height), watermark)
+    #             # Resize the watermark image to fit the image
+    #             width, height = image.size
+    #             watermark = watermark.resize((int(width * 0.2), int(height * 0.2)))
 
-                return image
-            else:
-                raise Exception("Failed to download media image from URL")
-        else:
-            raise Exception("Failed to download watermark image from URL")
-    def save_watermarked_image(self, watermarked_image, original_image_name):
-        # Convert the watermarked image to RGB mode (removing the alpha channel)
-        watermarked_image = watermarked_image.convert("RGB")
+    #             # Create a transparent layer for the watermark
+    #             watermark_layer = Image.new("RGBA", image.size)
+    #             watermark_layer.paste(watermark, (width - watermark.width, height - watermark.height), watermark)
 
-        buffer = BytesIO()
-        watermarked_image.save(buffer, format='JPEG')
-        return InMemoryUploadedFile(buffer, None, original_image_name, 'image/jpeg', buffer.tell(), None)
+    #             # Composite the watermark onto the original image
+    #             watermarked_image = Image.alpha_composite(image, watermark_layer)
 
-    def get_image_name(self, image_url):
-        # Extract the image name from the URL
-        return image_url.split('/')[-1]
+    #             return watermarked_image
+
+    #     raise Exception("Failed to add watermark to the image")
+    
+    # def save_watermarked_image(self, watermarked_image, original_image_name):
+    #     # Convert the watermarked image to RGB mode (removing the alpha channel)
+    #     watermarked_image = watermarked_image.convert("RGB")
+
+    #     buffer = BytesIO()
+    #     watermarked_image.save(buffer, format='JPEG')
+    #     return InMemoryUploadedFile(buffer, None, original_image_name, 'image/jpeg', buffer.tell(), None)
+
+    # def get_image_name(self, image_url):
+    #     # Extract the image name from the URL
+    #     return image_url.split('/')[-1]
 

@@ -11,20 +11,27 @@ class UserProfile(DatedModel):
     city = models.CharField(max_length=100, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     address = models.CharField(max_length=100, blank=True, null=True)
+    email = models.EmailField(unique=True, null=True, blank=True)
 
     def __str__(self):
         return self.user.username
 
 class Agent(DatedModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True ,related_name='agent')
     name = models.CharField(max_length=100)
     email = models.EmailField()
+    company_name = models.CharField(max_length=200, null=True, blank=True)
+    company_ntn = models.CharField(max_length=100, null=True, blank=True)
+    cnic = models.CharField(max_length=100, null=True, blank=True)
     whatsapp_num = models.CharField(max_length=20, null=True, blank=True)
     phone_number = models.CharField(max_length=20)
     bio = models.TextField()
     nationality = models.CharField(max_length=50)
     languages = models.CharField(max_length=200)
-    areas = models.CharField(max_length=200)
+    city = models.CharField(max_length=200, null=True, blank=True)
+    province = models.CharField(max_length=200, null=True, blank=True)
+    areas= models.CharField(max_length=200)
+    postal_code = models.CharField(max_length=200, null=True, blank=True)
     experience_since = models.DateField(default=timezone.now)
     views_count = models.PositiveIntegerField(default=0)
 
