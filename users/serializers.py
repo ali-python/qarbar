@@ -157,8 +157,8 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 class AgentSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-
+    user = UserSerializer(allow_null=True)
+    # properties = PropertySerializer(many=True, read_only=True)
     class Meta:
         model = Agent
         fields = (

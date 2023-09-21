@@ -14,7 +14,8 @@ from rest_framework.authtoken.models import Token
 
 from .serializers import AgentSerializer
 from .models import Agent, UserProfile
-
+from property.models import Property
+from property.serializers import PropertySerializer
 from users.serializers import (
     AuthTokenCustomSerializer,
     UserSerializer,
@@ -122,5 +123,12 @@ class AgentViewSet(viewsets.ModelViewSet):
         agent = self.get_object()
         agent.views_count += 1  # Increment view count by 1
         agent.save() 
-        serializer = AgentSerializer(agent)
-        return Response(serializer.data)
+         # Filter properties based on the agent's ID
+        properties = Property.objects.filter(agent=agent)
+        
+        # Serialize the agent along with the filtered properties
+        serializer = AgentSerializer(instance=agent, context={'request': request})
+        data = serializer.data
+        data['properties'] = PropertySerializer(instance=properties, many=True).data
+
+        return Response(data)
