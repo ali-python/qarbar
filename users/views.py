@@ -150,6 +150,10 @@ class AgentViewSet(viewsets.ModelViewSet):
             office_count_sale=Count('pk', filter=Q(property_type__commercial_types='office', rent_sale_type='sale'))
         )
 
+         # Count how many properties an agent has for sale and for rent
+        sale_count = properties.filter(rent_sale_type='sale').count()
+        rent_count = properties.filter(rent_sale_type='rent').count()
+
         # Apply pagination to the properties
         paginator = AgentPropertyPagination()
         properties = paginator.paginate_queryset(properties, request)
@@ -158,6 +162,8 @@ class AgentViewSet(viewsets.ModelViewSet):
         data = serializer.data
         data['properties'] = PropertySerializer(instance=properties, many=True).data
         data['property_counts'] = property_counts[0] if property_counts else {}
+        data['sale_count'] = sale_count
+        data['rent_count'] = rent_count
 
         return paginator.get_paginated_response(data)
 
