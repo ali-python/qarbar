@@ -12,7 +12,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token 
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Count, Q
+from django.db.models import Count, Q,  Case, When, IntegerField
 
 from .serializers import AgentSerializer
 from .models import Agent, UserProfile
@@ -116,12 +116,26 @@ class AgentPropertyPagination(PageNumberPagination):
     max_page_size = 100
 
 class AgentViewSet(viewsets.ModelViewSet):
-    queryset = Agent.objects.all()
+    queryset = Agent.objects.all().order_by('-created_at')
     serializer_class = AgentSerializer
     permission_classes = []
 
-    def get_queryset(self):
-        return Agent.objects.all().order_by('-created_at')
+    def list(self, request, *args, **kwargs):
+        agents = self.get_queryset()
+        agent_data = []
+        
+        for agent in agents:
+            # Count rental and sale properties for each agent
+            rent_count = agent.individual_properties.filter(rent_sale_type='rent').count()
+            sale_count = agent.individual_properties.filter(rent_sale_type='sale').count()
+
+            serializer = self.get_serializer(agent)
+            data = serializer.data
+            data['rent_property_count'] = rent_count
+            data['sale_property_count'] = sale_count
+            agent_data.append(data)
+
+        return Response(agent_data)
     
     def perform_create(self, serializer):
         serializer.save()
