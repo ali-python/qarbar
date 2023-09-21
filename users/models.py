@@ -34,9 +34,9 @@ class Agent(DatedModel):
     postal_code = models.CharField(max_length=200, null=True, blank=True)
     experience_since = models.DateField(default=timezone.now)
     views_count = models.PositiveIntegerField(default=0)
-
+    
     def __str__(self):
-        return self.name
+        return self.name or f"Agent {self.id}"
 
 # Signal Functions
 def create_profile(sender, instance, created, **kwargs):
