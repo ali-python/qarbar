@@ -11,6 +11,8 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token 
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Count, Q
 
 from .serializers import AgentSerializer
 from .models import Agent, UserProfile
@@ -107,6 +109,12 @@ class UserViewSet(
             return Response(data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+class AgentPropertyPagination(PageNumberPagination):
+    page_size = 10 # Set the number of properties per page
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all()
     serializer_class = AgentSerializer
@@ -122,13 +130,35 @@ class AgentViewSet(viewsets.ModelViewSet):
     def detail_agent(self, request, pk=None):
         agent = self.get_object()
         agent.views_count += 1  # Increment view count by 1
-        agent.save() 
-         # Filter properties based on the agent's ID
+        agent.save()
+
+        # Filter properties based on the agent's ID
         properties = Property.objects.filter(agent=agent)
-        
-        # Serialize the agent along with the filtered properties
+
+        # Annotate property counts
+        property_counts = Property.objects.filter(agent=agent).values(
+            'property_type__home_types',
+            'property_type__plot_types',
+            'property_type__commercial_types'
+        ).annotate(
+            home_type_count=Count('property_type__home_types'),
+            plot_type_count=Count('property_type__plot_types'),
+            commercial_types_count=Count('property_type__commercial_types'),
+            house_count_rent=Count('pk', filter=Q(property_type__home_types='house', rent_sale_type='rent')),
+            house_count_sale=Count('pk', filter=Q(property_type__home_types='house', rent_sale_type='sale')),
+            office_count_rent=Count('pk', filter=Q(property_type__commercial_types='office', rent_sale_type='rent')),
+            office_count_sale=Count('pk', filter=Q(property_type__commercial_types='office', rent_sale_type='sale'))
+        )
+
+        # Apply pagination to the properties
+        paginator = AgentPropertyPagination()
+        properties = paginator.paginate_queryset(properties, request)
+
         serializer = AgentSerializer(instance=agent, context={'request': request})
         data = serializer.data
         data['properties'] = PropertySerializer(instance=properties, many=True).data
+        data['property_counts'] = property_counts[0] if property_counts else {}
 
-        return Response(data)
+        return paginator.get_paginated_response(data)
+
+
