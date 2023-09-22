@@ -74,7 +74,7 @@ class Media(DatedModel):
         ('image', 'Image'),
         ('Video', 'Video'),
     )
-    project = models.ForeignKey(Projects, related_name="property_media", on_delete=models.CASCADE, null=True, blank=True)
+    project = models.ForeignKey(Projects, related_name="project_media", on_delete=models.CASCADE, null=True, blank=True)
     media_type = models.CharField(max_length=20, choices=MEDIA_TYPES, default="image")
     image_url = models.CharField(max_length=250)
     

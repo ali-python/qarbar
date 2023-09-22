@@ -30,8 +30,13 @@ class DocumentSerializer(serializers.ModelSerializer):
         model = Document
         fields = '__all__'
 
+class MediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Media
+        fields = '__all__'
 
 class ProjectsSerializer(serializers.ModelSerializer):
+    media = MediaSerializer(many=True, read_only=True, source='project_media')
     brochure_document = DocumentSerializer()
     available_units = ProjectBedSerializer()
     amenities = PorjectAmenitiesSerializer()
@@ -42,12 +47,7 @@ class ProjectsSerializer(serializers.ModelSerializer):
         model = Projects
         fields = '__all__'
 
-class MediaSerializer(serializers.ModelSerializer):
-    new_project = ProjectsSerializer()
 
-    class Meta:
-        model = Media
-        fields = '__all__'
 
 class CreateProjectSerializer(serializers.ModelSerializer):
     media = serializers.ListSerializer(
