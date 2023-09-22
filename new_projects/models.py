@@ -50,7 +50,7 @@ class Document(models.Model):
 class Projects(DatedModel):
     agent = models.ForeignKey(Agent, related_name="individua_agent", on_delete=models.CASCADE, null=True, blank=True)
     company_agent = models.ForeignKey(CompanyAgent, related_name="company_project", on_delete=models.CASCADE, null=True, blank=True)
-    property_type = models.OneToOneField(PropertyTypes, on_delete=models.CASCADE, null=True, blank=True)
+    property_type = models.OneToOneField(PropertyTypes, related_name='project_property_types', on_delete=models.CASCADE, null=True, blank=True)
     property_location = models.OneToOneField(PropertyLocation, on_delete=models.CASCADE, null=True, blank=True)
     city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
     country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, blank=True)

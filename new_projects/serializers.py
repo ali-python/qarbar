@@ -37,6 +37,8 @@ class MediaSerializer(serializers.ModelSerializer):
 
 class ProjectsSerializer(serializers.ModelSerializer):
     media = MediaSerializer(many=True, read_only=True, source='project_media')
+    property_type = PropertyTypesSerializer(read_only=True)
+    property_location = PropertyLocationSerializer(read_only=True)
     brochure_document = DocumentSerializer()
     available_units = ProjectBedSerializer()
     amenities = PorjectAmenitiesSerializer()

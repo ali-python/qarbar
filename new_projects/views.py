@@ -19,28 +19,28 @@ class ProjectViewSet(
     filterset_class = []
     permission_classes = []
 
-    @action(detail=False, methods=['GET'])
-    def agent_properties(self, request):
-        user = self.request.user
-        if user.is_staff or (hasattr(user, 'users') and hasattr(user.users, 'agent')):
-            if user.is_staff:
-                properties = self.get_queryset()
-            else:
-                properties = self.get_queryset().filter(agent__agent_user__user=user)
-            serializer = self.get_serializer(properties, many=True)
-            return Response(serializer.data)
-        return HttpResponse("Unauthorized", status=401)
+    # @action(detail=False, methods=['GET'])
+    # def agent_properties(self, request):
+    #     user = self.request.user
+    #     if user.is_staff or (hasattr(user, 'users') and hasattr(user.users, 'agent')):
+    #         if user.is_staff:
+    #             properties = self.get_queryset()
+    #         else:
+    #             properties = self.get_queryset().filter(agent__agent_user__user=user)
+    #         serializer = self.get_serializer(properties, many=True)
+    #         return Response(serializer.data)
+    #     return HttpResponse("Unauthorized", status=401)
 
-    def destroy(self, request, *args, **kwargs):
-        if self.request.user.is_authenticated and self.request.user.is_staff or self.request.user.users.agent:
-            return super().destroy(request, *args, **kwargs)
-        return Response({'message': 'Page not found'}, status=status.HTTP_404_NOT_FOUND)
+    # def destroy(self, request, *args, **kwargs):
+    #     if self.request.user.is_authenticated and self.request.user.is_staff or self.request.user.users.agent:
+    #         return super().destroy(request, *args, **kwargs)
+    #     return Response({'message': 'Page not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=True, methods=['GET'])
-    def detail_property(self, request, pk=None):
-        project = self.get_object()
-        serializer = ProjectsSerializer(project)
-        return Response(serializer.data)
+    # @action(detail=True, methods=['GET'])
+    # def detail_property(self, request, pk=None):
+    #     project = self.get_object()
+    #     serializer = ProjectsSerializer(project)
+    #     return Response(serializer.data)
 
     @action(detail=False, methods=['POST'])
     def create_property(self, request):
