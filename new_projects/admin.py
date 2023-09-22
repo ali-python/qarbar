@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PorjectAmenities, UnitType, ProjectBed, Document, Projects
+from .models import PorjectAmenities, UnitType, ProjectBed, Document, Projects, Media
 
 class PorjectAmenitiesAdmin(admin.ModelAdmin):
     list_display = (
@@ -25,6 +25,7 @@ class ProjectsAdmin(admin.ModelAdmin):
     date_hierarchy = 'delivery_date'
 
 admin.site.register(Projects, ProjectsAdmin)
+admin.site.register(Media)
 admin.site.register(Document, DocumentAdmin)
 admin.site.register(ProjectBed, ProjectBedAdmin)
 admin.site.register(UnitType, UnitTypeAdmin)
