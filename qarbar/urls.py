@@ -33,7 +33,7 @@ router.register(r'api/v1/companies', CompanyViewSet, basename='company')
 router.register(r'api/v1/custom/company/users', CustomUserViewSet, basename='customuserscompany')
 router.register(r'api/v1/company/agents', CompanyAgentViewSet, basename='agents_company')
 router.register(r'api/v1/news', NewsViewSet, basename='news')
-router.register(r'api/v1/new/projects', ProjectViewSet, basename='projects')
+router.register(r'api/v1/projects', ProjectViewSet, basename='projects')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
