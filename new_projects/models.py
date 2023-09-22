@@ -45,9 +45,15 @@ class ProjectBed(models.Model):
     
 class Document(models.Model):
     title = models.CharField(max_length=100)
-    pdf_file = models.FileField(upload_to='pdf_files/')
+    pdf_file = models.CharField(max_length=200)
 
 class Projects(DatedModel):
+    PROJECT_TYPES = (
+        ('upcoming', 'UpComing'),
+        ('underconstruction', 'UnderCostruction'),
+        ('completed', 'Completed'),
+    )
+    project_types = models.CharField(max_length=20, choices=PROJECT_TYPES, default="upcoming", null=True, blank=True)
     agent = models.ForeignKey(Agent, related_name="individua_agent", on_delete=models.CASCADE, null=True, blank=True)
     company_agent = models.ForeignKey(CompanyAgent, related_name="company_project", on_delete=models.CASCADE, null=True, blank=True)
     property_type = models.OneToOneField(PropertyTypes, related_name='project_property_types', on_delete=models.CASCADE, null=True, blank=True)
@@ -56,7 +62,7 @@ class Projects(DatedModel):
     country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, blank=True)
     installment = models.OneToOneField(PropertyInstallment, on_delete=models.CASCADE, null=True, blank=True)
     amenities = models.OneToOneField(PorjectAmenities, on_delete=models.CASCADE, null=True, blank=True)
-    available_units = models.OneToOneField(ProjectBed, on_delete=models.CASCADE, null=True, blank=True)
+    available_units = models.ForeignKey(ProjectBed, on_delete=models.CASCADE, null=True, blank=True)
     brochure_document = models.ForeignKey(Document, on_delete=models.CASCADE, null=True, blank=True)
     developer_name = models.CharField(max_length=250)
     title = models.CharField(max_length=200)

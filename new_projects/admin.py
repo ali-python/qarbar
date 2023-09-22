@@ -3,7 +3,7 @@ from .models import PorjectAmenities, UnitType, ProjectBed, Document, Projects, 
 
 class PorjectAmenitiesAdmin(admin.ModelAdmin):
     list_display = (
-        'gymnasium', 'swimming_pool', 'infinity_pool', 'childerns_play_area',
+        'id','gymnasium', 'swimming_pool', 'infinity_pool', 'childerns_play_area',
         'restaurant', 'leisure_lounge', 'retial_shop_outlet',
         'near_by_hospital', 'near_by_school', 'near_by_shpping_mall',
         'near_by_super_market'

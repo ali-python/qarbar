@@ -43,7 +43,7 @@ class ProjectViewSet(
     #     return Response(serializer.data)
 
     @action(detail=False, methods=['POST'])
-    def create_property(self, request):
+    def create_project(self, request):
         if self.request.user:
             serializer = CreateProjectSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
