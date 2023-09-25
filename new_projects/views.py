@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from .models import Projects
 from .serializers import CreateProjectSerializer, ProjectsSerializer
-
+from new_projects.filter_set import ProjectFilter
 class ProjectViewSet(
     viewsets.mixins.ListModelMixin,
     viewsets.mixins.RetrieveModelMixin,
@@ -16,7 +16,9 @@ class ProjectViewSet(
     queryset = Projects.objects.all().order_by('-id')
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     ordering_fields = ['created_at', 'updated_at', 'property_type']
-    filterset_class = []
+    search_fields = ['property_type__home_types', 'property_type__plot_types','property_type__commercial_types', 'property_type__unit_types', 'property_type__size', 'project_types']
+
+    filterset_class = ProjectFilter
     permission_classes = []
 
     # @action(detail=False, methods=['GET'])
