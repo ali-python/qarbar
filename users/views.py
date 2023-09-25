@@ -1,4 +1,4 @@
-from rest_framework import status, viewsets, permissions
+from rest_framework import status, viewsets, permissions, filters
 from rest_framework.authtoken.admin import User
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -7,13 +7,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
 from django.db import transaction
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as django_filters
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token 
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Count, Q,  Case, When, IntegerField
-
+from users.filter_set import AgentFilter
 from .serializers import AgentSerializer
 from .models import Agent, UserProfile
 from property.models import Property
@@ -117,11 +119,16 @@ class AgentPropertyPagination(PageNumberPagination):
 
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all().order_by('-created_at')
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     serializer_class = AgentSerializer
+    filterset_class = AgentFilter
     permission_classes = []
 
     def list(self, request, *args, **kwargs):
-        agents = self.get_queryset()
+        if request.query_params:
+            agents = self.filter_queryset(self.get_queryset())
+        else:
+            agents = self.get_queryset()
         agent_data = []
         
         for agent in agents:
