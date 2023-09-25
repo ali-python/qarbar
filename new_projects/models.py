@@ -13,6 +13,7 @@ from property.models import (
 )
 
 class PorjectAmenities(DatedModel):
+    bedrooms = models.IntegerField(default=0, null=True, blank=True)
     gymnasium = models.BooleanField(default=False)
     swimming_pool = models.BooleanField(default=False)
     infinity_pool = models.BooleanField(default=False)
