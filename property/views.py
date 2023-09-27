@@ -217,6 +217,13 @@ class PropertyViewSet(
         serializer = PropertySerializer(property)
         return Response(serializer.data)
     
+    @action(detail=True, methods=['POST'], url_path='toggle-available')
+    def toggle_available(self, request, pk=None):
+        property_instance = self.get_object()
+        property_instance.available = not property_instance.available
+        property_instance.save()
+        return Response({'message': 'Available status toggled successfully'}, status=200)
+    
     @action(detail=False, methods=['POST'])
     def create_property(self, request):
         if self.request.user:
