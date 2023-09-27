@@ -4,11 +4,13 @@ from django.http import HttpResponse
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets, filters, permissions, status
 from rest_framework.decorators import action
+import os
 from .models import Country, City, Property, Area
 from django.db.models import Count, Q
 from users.models import Agent
 from property.filter_set import PropertyFilter
 from users.serializers import AgentSerializer
+from PIL import Image, ImageDraw, ImageFont
 from .serializers import (
     CountrySerializer,
     CitySerializer,
@@ -161,22 +163,6 @@ class PropertyViewSet(
     filterset_class = PropertyFilter
     permission_classes = []
 
-    # @action(detail=False, methods=['GET'])
-    # def agent_properties(self, request):
-    #     user = self.request.user
-
-    #     if user.is_staff or Agent.objects.filter(user=user).exists():
-    #         # Filter properties based on the agent user
-    #         if user.is_staff:
-    #             # If the user is staff, show all properties
-    #             properties = self.get_queryset()
-    #         else:
-    #             # If the user is an agent user, show only their properties
-    #             properties = self.get_queryset().filter(agent__user=user)
-    #         serializer = self.get_serializer(properties, many=True)
-    #         return Response(serializer.data)
-    #     return HttpResponse("Unauthorized", status=401)
-
     @action(detail=False, methods=['GET'])
     def agent_properties(self, request):
         user = self.request.user
@@ -227,7 +213,7 @@ class PropertyViewSet(
     def detail_property(self, request, pk=None):
         property = self.get_object()
         property.views_count += 1  # Increment view count by 1
-        property.save() 
+        property.save()
         serializer = PropertySerializer(property)
         return Response(serializer.data)
     

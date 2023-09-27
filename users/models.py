@@ -18,6 +18,7 @@ class UserProfile(DatedModel):
 
 class Agent(DatedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True ,related_name='agent')
+    image = models.CharField(max_length=250, null=True, blank=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     company_name = models.CharField(max_length=200, null=True, blank=True)
