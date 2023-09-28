@@ -4,10 +4,12 @@ from django.http import HttpResponse
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets, filters, permissions, status
 from rest_framework.decorators import action
-import os
+from django.db.models import Sum 
 from .models import Country, City, Property, Area
 from django.db.models import Count, Q
+from calendar import month_name
 from users.models import Agent
+from datetime import datetime, timedelta
 from property.filter_set import PropertyFilter
 from users.serializers import AgentSerializer
 from PIL import Image, ImageDraw, ImageFont
@@ -203,7 +205,87 @@ class PropertyViewSet(
             return Response(response_data)
         return HttpResponse("Unauthorized", status=401)
 
+    @action(detail=False, methods=['GET'], url_path='agent-dashboard')
+    def agent_dashboard(self, request):
+        user = self.request.user
 
+        if user.is_staff or Agent.objects.filter(user=user).exists():
+            # Calculate the total number of agent properties
+            if user.is_staff:
+                total_agent_properties = Property.objects.count()
+            else:
+                total_agent_properties = Property.objects.filter(agent__user=user).count()
+
+            # Calculate the total number of properties sold based on 'available' field
+            total_properties_sold = Property.objects.filter(agent__user=user, available=False).count()
+
+            # Calculate the total number of rent and sale properties
+            total_rent_properties = Property.objects.filter(agent__user=user, rent_sale_type='rent').count()
+            total_sale_properties = Property.objects.filter(agent__user=user, rent_sale_type='sale').count()
+
+            # Calculate the total views on agent properties
+            total_views_on_agent_properties = Property.objects.filter(agent__user=user).aggregate(Sum('views_count'))['views_count__sum']
+            # Calculate the total views on rent properties
+            total_views_on_rent_properties = Property.objects.filter(agent__user=user, rent_sale_type='rent').aggregate(total_views=Sum('views_count'))['total_views']
+
+            # Calculate the total views on sale properties
+            total_views_on_sale_properties = Property.objects.filter(agent__user=user, rent_sale_type='sale').aggregate(total_views=Sum('views_count'))['total_views']
+            response_data = {
+                'total_agent_properties': total_agent_properties,
+                'total_properties_sold': total_properties_sold,
+                'total_rent_properties': total_rent_properties,
+                'total_sale_properties': total_sale_properties,
+                'total_views_on_agent_properties': total_views_on_agent_properties,
+                'total_views_on_rent_properties': total_views_on_rent_properties,
+                'total_views_on_sale_properties': total_views_on_sale_properties,
+            }
+
+            return Response(response_data)
+        return HttpResponse("Unauthorized", status=401)
+    
+    @action(detail=False, methods=['GET'], url_path='agent-graph')
+    def agent_graph(self, request):
+        user = self.request.user
+
+        if user.is_staff or Agent.objects.filter(user=user).exists():
+            # Calculate the date 6 months ago
+            six_months_ago = datetime.now() - timedelta(days=180)
+
+            # Query properties sold in the last 6 months
+            properties_sold_in_last_six_months = Property.objects.filter(
+                Q(available=False) & Q(date__gte=six_months_ago)
+            )
+
+            # Create a dictionary to store counts by month
+            month_counts = {}
+            for month_num in range(1, 13):
+                month_name_str = month_name[month_num]
+                month_counts[month_name_str] = {
+                    'total_properties_sold': 0,
+                    'rent_properties_sold': 0,
+                    'sale_properties_sold': 0,
+                }
+
+            # Populate the counts by month
+            for property in properties_sold_in_last_six_months:
+                month_name_str = month_name[property.date.month]
+                month_counts[month_name_str]['total_properties_sold'] += 1
+                if property.rent_sale_type == 'rent':
+                    month_counts[month_name_str]['rent_properties_sold'] += 1
+                elif property.rent_sale_type == 'sale':
+                    month_counts[month_name_str]['sale_properties_sold'] += 1
+
+            # Calculate the total number of properties
+            total_properties = Property.objects.count()
+
+            response_data = {
+                'month_counts': month_counts,
+                'total_properties': total_properties,
+            }
+
+            return Response(response_data)
+        return HttpResponse("Unauthorized", status=401)
+    
     def destroy(self, request, *args, **kwargs):
         if self.request.user.is_authenticated and self.request.user.is_staff or self.request.user.users.agent:
             return super().destroy(request, *args, **kwargs)
