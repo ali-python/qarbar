@@ -3,6 +3,8 @@ from users .models import Agent
 from django.utils import timezone
 from core.models import DatedModel
 from company.models import CompanyAgent
+from django.contrib.auth.models import User
+
 
 class Country(DatedModel):
     country_name = models.CharField(max_length=100)
@@ -130,6 +132,7 @@ class Property(DatedModel):
         ('rent', 'Rent'),
         ('sale', 'Sale'),
     )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True ,related_name='user_property')
     title = models.CharField(max_length=200, null=True, blank=True)
     phone = models.CharField(max_length=50, default=0)
     landline = models.CharField(max_length=50, null=True, blank=True)
@@ -148,6 +151,7 @@ class Property(DatedModel):
     total_price = models.IntegerField(null=True, blank=True, default=0)
     views_count = models.PositiveIntegerField(default=0)
     date = models.DateField(default=timezone.now)
+    admin_check  = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.title}"

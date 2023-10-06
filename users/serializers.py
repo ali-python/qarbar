@@ -141,13 +141,27 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ('phone_number', 'dob', 'city', 'country', 'address')
 
 
+# class UserSerializer(serializers.ModelSerializer):
+#     agent_id = serializers.ReadOnlyField(source='agent.id')
+
+#     class Meta:
+#         model = User
+#         fields = ['id','agent_id', 'username', 'first_name', 'last_name', 'email', 'password']
+#         extra_kwargs = {'password': {'write_only': True}}
+        
 class UserSerializer(serializers.ModelSerializer):
-    agent_id = serializers.ReadOnlyField(source='agent.id')
+    id_or_agent_id = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id','agent_id', 'username', 'first_name', 'last_name', 'email', 'password']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'id_or_agent_id']
         extra_kwargs = {'password': {'write_only': True}}
+
+    def get_id_or_agent_id(self, obj):
+        try:
+            return obj.agent.id
+        except Agent.DoesNotExist:
+            return obj.id
 
     def create(self, validated_data):
         password = validated_data.pop('password')

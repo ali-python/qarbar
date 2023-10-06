@@ -8,6 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image, UnidentifiedImageError
 from urllib.parse import urlparse 
+from users.serializers import UserSerializer
 from io import BytesIO
 import base64
 import requests
@@ -71,6 +72,7 @@ class CustomDateField(serializers.ReadOnlyField):
         return value
     
 class PropertySerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True, required=False)
     media = MediaSerializer(many=True, read_only=True, source='property_media')
     area = AreaSerializer(read_only=True)
     amenties = AmentiesSerializer(read_only=True, allow_null = True)
@@ -89,6 +91,7 @@ class PropertySerializer(serializers.ModelSerializer):
             'media',
             'rent_sale_type',
             'area',
+            'user',
             'agent',
             'company_agent',
             'amenties',
