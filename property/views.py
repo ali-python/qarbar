@@ -177,33 +177,36 @@ class PropertyViewSet(
             else:
                 # If the user is an agent user, show only their properties
                 properties = self.get_queryset().filter(agent__user=user)
+        else:
+            # For regular users, show only their properties
+            properties = self.get_queryset().filter(user=request.user)
 
-            # Count properties by property types (home types and plot types)
-            property_counts = properties.values('property_type__home_types', 'property_type__plot_types', 'property_type__commercial_types') \
-                .annotate(home_type_count=Count('property_type__home_types'),
-                        plot_type_count=Count('property_type__plot_types'),
-                        commercial_types_count=Count('property_type__commercial_types'))
-            
-               # Count properties with home_type='house'
-            house_count_rent = properties.filter(property_type__home_types='house', rent_sale_type= 'rent').count()
-            house_count_sale = properties.filter(property_type__home_types='house', rent_sale_type= 'sale').count()
-            office_count_sale = properties.filter(property_type__commercial_types='office', rent_sale_type= 'sale').count()
-            office_count_rent = properties.filter(property_type__commercial_types='office', rent_sale_type= 'rent').count()
 
-            serializer = self.get_serializer(properties, many=True)
+        # Count properties by property types (home types and plot types)
+        property_counts = properties.values('property_type__home_types', 'property_type__plot_types', 'property_type__commercial_types') \
+            .annotate(home_type_count=Count('property_type__home_types'),
+                    plot_type_count=Count('property_type__plot_types'),
+                    commercial_types_count=Count('property_type__commercial_types'))
 
-            # Include the property counts in the response
-            response_data = {
-                'properties': serializer.data,
-                'property_counts': property_counts,
-                'house_count_rent': house_count_rent,
-                'house_count_sale':house_count_sale,
-                'office_count_sale':office_count_sale,
-                'office_count_rent':office_count_rent
-            }
+        # Count properties with home_type='house'
+        house_count_rent = properties.filter(property_type__home_types='house', rent_sale_type='rent').count()
+        house_count_sale = properties.filter(property_type__home_types='house', rent_sale_type='sale').count()
+        office_count_sale = properties.filter(property_type__commercial_types='office', rent_sale_type='sale').count()
+        office_count_rent = properties.filter(property_type__commercial_types='office', rent_sale_type='rent').count()
 
-            return Response(response_data)
-        return HttpResponse("Unauthorized", status=401)
+        serializer = self.get_serializer(properties, many=True)
+
+        # Include the property counts in the response
+        response_data = {
+            'properties': serializer.data,
+            'property_counts': property_counts,
+            'house_count_rent': house_count_rent,
+            'house_count_sale': house_count_sale,
+            'office_count_sale': office_count_sale,
+            'office_count_rent': office_count_rent
+        }
+
+        return Response(response_data)
 
     @action(detail=False, methods=['GET'], url_path='agent-dashboard')
     def agent_dashboard(self, request):

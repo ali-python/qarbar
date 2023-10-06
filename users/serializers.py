@@ -141,13 +141,43 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ('phone_number', 'dob', 'city', 'country', 'address')
 
 
+# class UserSerializer(serializers.ModelSerializer):
+#     agent_id = serializers.ReadOnlyField(source='agent.id')
+
+#     class Meta:
+#         model = User
+#         fields = ['id','agent_id', 'username', 'first_name', 'last_name', 'email', 'password']
+#         extra_kwargs = {'password': {'write_only': True}}
+
 class UserSerializer(serializers.ModelSerializer):
-    agent_id = serializers.ReadOnlyField(source='agent.id')
+    user_id = serializers.SerializerMethodField()
+    agent_id = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id','agent_id', 'username', 'first_name', 'last_name', 'email', 'password']
+        fields = ['username', 'first_name', 'last_name', 'email', 'password', 'user_id', 'agent_id']
         extra_kwargs = {'password': {'write_only': True}}
+
+    def get_user_id(self, obj):
+        try:
+            return obj.agent.user_id
+        except Agent.DoesNotExist:
+            return obj.id
+
+    def get_agent_id(self, obj):
+        try:
+            agent_id = obj.agent.id
+            return agent_id if agent_id is not None else None
+        except Agent.DoesNotExist:
+            return None
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data['agent_id'] is None:
+            del data['agent_id']
+        elif data['agent_id'] is not None:
+            del data['user_id']
+        return data
 
     def create(self, validated_data):
         password = validated_data.pop('password')
