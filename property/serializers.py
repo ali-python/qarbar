@@ -65,7 +65,7 @@ class AmentiesSerializer(serializers.ModelSerializer):
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Media
-        fields =['image_url', 'media_type', 'created_at', 'updated_at']
+        fields =['id', 'image_url', 'media_type', 'created_at', 'updated_at']
 
 class CustomDateField(serializers.ReadOnlyField):
     def to_representation(self, value):
@@ -89,6 +89,10 @@ class PropertySerializer(serializers.ModelSerializer):
             'id',
             'title',
             'media',
+            'phone',
+            'landline',
+            'secondry_phone',
+            'email',
             'rent_sale_type',
             'area',
             'user',
@@ -181,50 +185,50 @@ class PropertySerializer(serializers.ModelSerializer):
     #     return data
 
 
-class CreatePropertySerializer(serializers.ModelSerializer):
-    media = serializers.ListSerializer(
-        child=serializers.DictField(
-            child=serializers.CharField(max_length=200)
-        ),
-        required=True
-    )
-    amenties = AmentiesSerializer(allow_null=True, required=False)
-    property_type = PropertyTypesSerializer(allow_null=True, required=False)
-    property_location = PropertyLocationSerializer(allow_null=True, required=False)
-    installment = InstallmentSerializer(allow_null=True, required=False)
+# class CreatePropertySerializer(serializers.ModelSerializer):
+#     media = serializers.ListSerializer(
+#         child=serializers.DictField(
+#             child=serializers.CharField(max_length=200)
+#         ),
+#         required=True
+#     )
+#     amenties = AmentiesSerializer(allow_null=True, required=False)
+#     property_type = PropertyTypesSerializer(allow_null=True, required=False)
+#     property_location = PropertyLocationSerializer(allow_null=True, required=False)
+#     installment = InstallmentSerializer(allow_null=True, required=False)
 
-    class Meta:
-        model = Property
-        fields = '__all__'
+#     class Meta:
+#         model = Property
+#         fields = '__all__'
 
-    def create(self, validated_data):
-        media_data = validated_data.pop('media')
-        amenties_data = validated_data.pop('amenties', None)
-        property_type_data = validated_data.pop('property_type', None)
-        property_location_data = validated_data.pop('property_location', None)
-        installment_data = validated_data.pop('installment', None)
+#     def create(self, validated_data):
+#         media_data = validated_data.pop('media')
+#         amenties_data = validated_data.pop('amenties', None)
+#         property_type_data = validated_data.pop('property_type', None)
+#         property_location_data = validated_data.pop('property_location', None)
+#         installment_data = validated_data.pop('installment', None)
 
-        property = Property.objects.create(**validated_data)
-        if amenties_data:
-            pa=PropertyAmenties.objects.create(property=property, **amenties_data)
-            property.amenties=pa
-            property.save()
-        if property_type_data:
-            pt=PropertyTypes.objects.create(property=property, **property_type_data)
-            property.property_type=pt
-            property.save()
-        if property_location_data:
-            pl=PropertyLocation.objects.create(property=property, **property_location_data)
-            property.property_location=pl
-            property.save()
-        if installment_data:
-            pi=PropertyInstallment.objects.create(property=property, **installment_data)
-            property.installment=pi
-            property.save()
-        for media in media_data:
-            Media.objects.create(property=property, **media)
+#         property = Property.objects.create(**validated_data)
+#         if amenties_data:
+#             pa=PropertyAmenties.objects.create(property=property, **amenties_data)
+#             property.amenties=pa
+#             property.save()
+#         if property_type_data:
+#             pt=PropertyTypes.objects.create(property=property, **property_type_data)
+#             property.property_type=pt
+#             property.save()
+#         if property_location_data:
+#             pl=PropertyLocation.objects.create(property=property, **property_location_data)
+#             property.property_location=pl
+#             property.save()
+#         if installment_data:
+#             pi=PropertyInstallment.objects.create(property=property, **installment_data)
+#             property.installment=pi
+#             property.save()
+#         for media in media_data:
+#             Media.objects.create(property=property, **media)
 
-            return property
+#             return property
 
     #     # Watermark and save each image to the Media model
     #     for media in media_data:
@@ -284,4 +288,76 @@ class CreatePropertySerializer(serializers.ModelSerializer):
     # def get_image_name(self, image_url):
     #     # Extract the image name from the URL
     #     return image_url.split('/')[-1]
+
+class CreatePropertySerializer(serializers.ModelSerializer):
+    media = serializers.ListSerializer(
+        child=serializers.DictField(
+            child=serializers.CharField(max_length=200)
+        ),
+        required=True
+    )
+    amenties = AmentiesSerializer(allow_null=True, required=False)
+    property_type = PropertyTypesSerializer(allow_null=True, required=False)
+    property_location = PropertyLocationSerializer(allow_null=True, required=False)
+    installment = InstallmentSerializer(allow_null=True, required=False)
+    user = UserSerializer(allow_null=True, required=False)
+    agent = AgentSerializer(allow_null=True, required=False)
+    company_agent = CompanyAgentSerializer(allow_null=True, required=False)
+
+    class Meta:
+        model = Property
+        fields = '__all__'
+
+    def create(self, validated_data):
+        media_data = validated_data.pop('media')
+        amenties_data = validated_data.pop('amenties', None)
+        property_type_data = validated_data.pop('property_type', None)
+        property_location_data = validated_data.pop('property_location', None)
+        installment_data = validated_data.pop('installment', None)
+        user_data = validated_data.pop('user', None)
+        agent_data = validated_data.pop('agent', None)
+        company_agent_data = validated_data.pop('company_agent', None)
+
+        property = Property.objects.create(**validated_data)
+
+        # Create related objects and link them to the property
+        if amenties_data:
+            pa = PropertyAmenties.objects.create(property=property, **amenties_data)
+            property.amenties = pa
+            property.save()
+
+        if property_type_data:
+            pt = PropertyTypes.objects.create(property=property, **property_type_data)
+            property.property_type = pt
+            property.save()
+
+        if property_location_data:
+            pl = PropertyLocation.objects.create(property=property, **property_location_data)
+            property.property_location = pl
+            property.save()
+
+        if installment_data:
+            pi = PropertyInstallment.objects.create(property=property, **installment_data)
+            property.installment = pi
+            property.save()
+
+        if user_data:
+            user = User.objects.create(**user_data)
+            property.user = user
+            property.save()
+
+        if agent_data:
+            agent = Agent.objects.create(**agent_data)
+            property.agent = agent
+            property.save()
+
+        if company_agent_data:
+            company_agent = CompanyAgent.objects.create(**company_agent_data)
+            property.company_agent = company_agent
+            property.save()
+
+        for media in media_data:
+            Media.objects.create(property=property, **media)
+
+        return property
 
