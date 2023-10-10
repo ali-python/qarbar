@@ -5,7 +5,7 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import viewsets, filters, permissions, status
 from rest_framework.decorators import action
 from django.db.models import Sum 
-from .models import Country, City, Property, Area
+from .models import Country, City, Property, Area, Media
 from django.db.models import Count, Q
 from calendar import month_name
 from users.models import Agent
@@ -19,6 +19,11 @@ from .serializers import (
     PropertySerializer, 
     MediaSerializer,
     CreatePropertySerializer, 
+    AreaSerializer,
+    PropertyTypesSerializer,
+    InstallmentSerializer,
+    AmentiesSerializer,
+    PropertyLocationSerializer,
     AreaSerializer
     )
 
@@ -170,25 +175,19 @@ class PropertyViewSet(
         user = self.request.user
 
         if user.is_staff or Agent.objects.filter(user=user).exists():
-            # Filter properties based on the agent user
             if user.is_staff:
-                # If the user is staff, show all properties
                 properties = self.get_queryset()
             else:
-                # If the user is an agent user, show only their properties
                 properties = self.get_queryset().filter(agent__user=user)
         else:
-            # For regular users, show only their properties
             properties = self.get_queryset().filter(user=request.user)
 
 
-        # Count properties by property types (home types and plot types)
         property_counts = properties.values('property_type__home_types', 'property_type__plot_types', 'property_type__commercial_types') \
             .annotate(home_type_count=Count('property_type__home_types'),
                     plot_type_count=Count('property_type__plot_types'),
                     commercial_types_count=Count('property_type__commercial_types'))
 
-        # Count properties with home_type='house'
         house_count_rent = properties.filter(property_type__home_types='house', rent_sale_type='rent').count()
         house_count_sale = properties.filter(property_type__home_types='house', rent_sale_type='sale').count()
         office_count_sale = properties.filter(property_type__commercial_types='office', rent_sale_type='sale').count()
@@ -196,7 +195,6 @@ class PropertyViewSet(
 
         serializer = self.get_serializer(properties, many=True)
 
-        # Include the property counts in the response
         response_data = {
             'properties': serializer.data,
             'property_counts': property_counts,
@@ -213,25 +211,19 @@ class PropertyViewSet(
         user = self.request.user
 
         if user.is_staff or Agent.objects.filter(user=user).exists():
-            # Calculate the total number of agent properties
             if user.is_staff:
                 total_agent_properties = Property.objects.count()
             else:
                 total_agent_properties = Property.objects.filter(agent__user=user).count()
 
-            # Calculate the total number of properties sold based on 'available' field
             total_properties_sold = Property.objects.filter(agent__user=user, available=False).count()
 
-            # Calculate the total number of rent and sale properties
             total_rent_properties = Property.objects.filter(agent__user=user, rent_sale_type='rent').count()
             total_sale_properties = Property.objects.filter(agent__user=user, rent_sale_type='sale').count()
 
-            # Calculate the total views on agent properties
             total_views_on_agent_properties = Property.objects.filter(agent__user=user).aggregate(Sum('views_count'))['views_count__sum']
-            # Calculate the total views on rent properties
             total_views_on_rent_properties = Property.objects.filter(agent__user=user, rent_sale_type='rent').aggregate(total_views=Sum('views_count'))['total_views']
 
-            # Calculate the total views on sale properties
             total_views_on_sale_properties = Property.objects.filter(agent__user=user, rent_sale_type='sale').aggregate(total_views=Sum('views_count'))['total_views']
             response_data = {
                 'total_agent_properties': total_agent_properties,
@@ -251,15 +243,12 @@ class PropertyViewSet(
         user = self.request.user
 
         if user.is_staff or Agent.objects.filter(user=user).exists():
-            # Calculate the date 6 months ago
             six_months_ago = datetime.now() - timedelta(days=180)
 
-            # Query properties sold in the last 6 months
             properties_sold_in_last_six_months = Property.objects.filter(
                 Q(available=False) & Q(date__gte=six_months_ago)
             )
 
-            # Create a dictionary to store counts by month
             month_counts = {}
             for month_num in range(1, 13):
                 month_name_str = month_name[month_num]
@@ -269,7 +258,6 @@ class PropertyViewSet(
                     'sale_properties_sold': 0,
                 }
 
-            # Populate the counts by month
             for property in properties_sold_in_last_six_months:
                 month_name_str = month_name[property.date.month]
                 month_counts[month_name_str]['total_properties_sold'] += 1
@@ -277,8 +265,6 @@ class PropertyViewSet(
                     month_counts[month_name_str]['rent_properties_sold'] += 1
                 elif property.rent_sale_type == 'sale':
                     month_counts[month_name_str]['sale_properties_sold'] += 1
-
-            # Calculate the total number of properties
             total_properties = Property.objects.count()
 
             response_data = {
@@ -297,7 +283,7 @@ class PropertyViewSet(
     @action(detail=True, methods=['GET'])
     def detail_property(self, request, pk=None):
         property = self.get_object()
-        property.views_count += 1  # Increment view count by 1
+        property.views_count += 1
         property.save()
         serializer = PropertySerializer(property)
         return Response(serializer.data)
@@ -319,4 +305,71 @@ class PropertyViewSet(
                 return Response(PropertySerializer(instance=property, context={'request': request}).data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'Page not found ohhh its error and some error'}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['PATCH'])
+    def update_property(self, request, pk=None):
+        try:
+            property_instance = self.get_object()
+        except Property.DoesNotExist:
+            return Response({'detail': 'Property not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PropertySerializer(property_instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            amenties_data = request.data.get('amenties')
+            property_location_data = request.data.get('property_location')
+            property_type_data = request.data.get('property_type')
+            installment_data = request.data.get('installment')
+            area_data = request.data.get('area')
+
+            if amenties_data:
+                amenties_serializer = AmentiesSerializer(property_instance.amenties, data=amenties_data, partial=True)
+                if amenties_serializer.is_valid():
+                    amenties_serializer.save()
+
+            if property_location_data:
+                property_location_instance = property_instance.property_location
+                property_location_instance.latitude = property_location_data.get('latitude', property_location_instance.latitude)
+                property_location_instance.longitude = property_location_data.get('longitude', property_location_instance.longitude)
+                property_location_instance.save()
+
+            if area_data:
+                area_serializer = AreaSerializer(property_instance.area, data=area_data, partial=True)
+                if area_serializer.is_valid():
+                    area_serializer.save()
+
+            if property_type_data:
+                property_type_serializer = PropertyTypesSerializer(property_instance.property_type, data=property_type_data, partial=True)
+                if property_type_serializer.is_valid():
+                    property_type_serializer.save()
+
+            if installment_data:
+                installment_serializer = InstallmentSerializer(property_instance.installment, data=installment_data, partial=True)
+                if installment_serializer.is_valid():
+                    installment_serializer.save()
+
+            media_data = request.data.get('media')
+            if media_data:
+                for media_item_data in media_data:
+                    media_item_id = media_item_data.get('id', None) 
+                    if media_item_id:
+                        try:
+                            media_item = Media.objects.get(id=media_item_id, property=property_instance)
+                            media_item.media_type = media_item_data.get('media_type', media_item.media_type)
+                            media_item.image_url = media_item_data.get('image_url', media_item.image_url)
+                            media_item.save()
+                        except Media.DoesNotExist:
+                            pass
+                    else:
+                        Media.objects.create(property=property_instance, **media_item_data)
+            serializer.save()
+
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
 
