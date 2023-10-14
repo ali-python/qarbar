@@ -306,7 +306,7 @@ class PropertyViewSet(
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({'message': 'Page not found ohhh its error and some error'}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=True, methods=['PATCH'])
+    @action(detail=True, methods=['PUT', 'PATCH'])
     def update_property(self, request, pk=None):
         try:
             property_instance = self.get_object()
