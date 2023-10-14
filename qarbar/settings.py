@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -161,6 +162,22 @@ AUTHENTICATION_BACKENDS = [
     'users.backend_auth.EmailOrUsernameModelBackend',  # Replace 'users' with your app name if needed
     'django.contrib.auth.backends.ModelBackend',  # Default authentication backend
 ]
+
+CKEDITOR_UPLOAD_PATH = 'ckeditor_uploads/'  # Define the path where uploaded files are stored.
+CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'  # Use a jQuery version compatible with CKEditor.
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['Image'],
+        ],
+        'height': 300,  # Set the height of the CKEditor widget.
+        'width': 800,   # Set the width of the CKEditor widget.
+    },
+}
 
 
 

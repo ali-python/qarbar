@@ -40,6 +40,7 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path('api/v1/auth/login/', LoginView.as_view(), name="login_api"),
     path('api/v1/auth/register/', RegisterView.as_view(), name="register_api"),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     # path('api/v1/auth/register/agent-list/', AgentView.as_view(), name="register_api")
 ]
 
