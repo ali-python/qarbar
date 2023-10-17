@@ -188,13 +188,17 @@ class UserSerializer(serializers.ModelSerializer):
 
 class AgentSerializer(serializers.ModelSerializer):
     user = UserSerializer(allow_null=True)
-    # properties = PropertySerializer(many=True, read_only=True)
+    whatsapp_num = serializers.CharField(allow_blank=True, required=False)
+    phone_number = serializers.CharField(allow_blank=True, required=False)
+    bio = serializers.CharField(allow_blank=True, required=False)
+    nationality = serializers.CharField(allow_blank=True, required=False)
+
     class Meta:
         model = Agent
         fields = (
-            'id','image', 'name', 'whatsapp_num', 'phone_number', 'bio',
+            'id', 'image', 'name', 'whatsapp_num', 'phone_number', 'bio',
             'nationality', 'languages', 'areas', 'experience_since', 'user', 'views_count',
-            'company_name','company_ntn','cnic','city','province','postal_code'
+            'company_name', 'company_ntn', 'cnic', 'city', 'province', 'postal_code', 'user'
         )
 
     def create(self, validated_data):
@@ -203,6 +207,92 @@ class AgentSerializer(serializers.ModelSerializer):
         
         agent = Agent.objects.create(user=user, **validated_data)
         return agent
+    
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {})
+        user = instance.user
+
+        # Update fields of the Agent model
+        instance.name = validated_data.get('name', instance.name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.company_name = validated_data.get('company_name', instance.company_name)
+        instance.whatsapp_num = validated_data.get('whatsapp_num', instance.whatsapp_num)
+        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
+        instance.bio = validated_data.get('bio', instance.bio)
+        instance.nationality = validated_data.get('nationality', instance.nationality)
+        instance.languages = validated_data.get('languages', instance.languages)
+        instance.areas = validated_data.get('areas', instance.areas)
+        instance.experience_since = validated_data.get('experience_since', instance.experience_since)
+        instance.company_name = validated_data.get('company_name', instance.company_name)
+        instance.company_ntn = validated_data.get('company_ntn', instance.company_ntn)
+        instance.cnic = validated_data.get('cnic', instance.cnic)
+        instance.city = validated_data.get('city', instance.city)
+        instance.province = validated_data.get('province', instance.province)
+        instance.postal_code = validated_data.get('postal_code', instance.company_ntn)
+
+        # Update fields of the User model
+        user.first_name = user_data.get('first_name', user.first_name)
+        user.last_name = user_data.get('last_name', user.last_name)
+        user.email = user_data.get('email', user.email)
+        user.save()
+
+        # Call the .save() method to save the changes to the Agent model
+        instance.save()
+
+        return instance
+    
+class AgentUserUpdateSerializer(serializers.Serializer):
+    agent_id = serializers.IntegerField(required=False)
+    user_id = serializers.IntegerField(required=False)
+    first_name = serializers.CharField(allow_blank=True, required=False)
+    last_name = serializers.CharField(allow_blank=True, required=False)
+    phone_number = serializers.CharField(allow_blank=True, required=False)
+    email = serializers.EmailField(allow_blank=True, required=False)
+    dob = serializers.DateField(required=False)
+    city = serializers.CharField(allow_blank=True, required=False)
+    country = serializers.CharField(allow_blank=True, required=False)
+
+    def save(self, **kwargs):
+        user_id = self.validated_data.get('user_id')
+        agent_id = self.validated_data.get('agent_id')
+
+        # Check if either user_id or agent_id is provided
+        if user_id:
+            user = User.objects.get(pk=user_id)
+            user_profile = user.userprofile
+        elif agent_id:
+            agent = Agent.objects.get(pk=agent_id)
+            user = agent.user
+            user_profile = user.userprofile
+        else:
+            # Return an error or handle it as per your requirements
+            raise serializers.ValidationError("Either user_id or agent_id must be provided.")
+
+        if 'first_name' in self.data:
+            user.first_name = self.validated_data.get('first_name')
+
+        if 'last_name' in self.data:
+            user.last_name = self.validated_data.get('last_name')
+
+        if 'email' in self.data:
+            user.email = self.validated_data.get('email')
+
+        if 'phone_number' in self.data:
+            user_profile.phone_number = self.validated_data.get('phone_number')
+
+        if 'dob' in self.data:
+            user_profile.dob = self.validated_data.get('dob')
+
+        if 'city' in self.data:
+            user_profile.city = self.validated_data.get('city')
+
+        if 'country' in self.data:
+            user_profile.country = self.validated_data.get('country')
+
+        user.save()
+        user_profile.save()
+
+        return user
 
 
 
