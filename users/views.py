@@ -16,7 +16,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Count, Q,  Case, When, IntegerField
 from users.filter_set import AgentFilter
-from .serializers import AgentSerializer
+from .serializers import AgentSerializer, UserProfileSerializer
 from .models import Agent, UserProfile
 from property.models import Property
 from property.serializers import PropertySerializer
@@ -117,6 +117,78 @@ class AgentPropertyPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
+# class AgentViewSet(viewsets.ModelViewSet):
+#     queryset = Agent.objects.all().order_by('-created_at')
+#     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
+#     serializer_class = AgentSerializer
+#     filterset_class = AgentFilter
+#     permission_classes = []
+
+#     def list(self, request, *args, **kwargs):
+#         if request.query_params:
+#             agents = self.filter_queryset(self.get_queryset())
+#         else:
+#             agents = self.get_queryset()
+#         agent_data = []
+        
+#         for agent in agents:
+#             # Count rental and sale properties for each agent
+#             rent_count = agent.individual_properties.filter(rent_sale_type='rent').count()
+#             sale_count = agent.individual_properties.filter(rent_sale_type='sale').count()
+
+#             serializer = self.get_serializer(agent)
+#             data = serializer.data
+#             data['rent_property_count'] = rent_count
+#             data['sale_property_count'] = sale_count
+#             agent_data.append(data)
+
+#         return Response(agent_data)
+    
+#     def perform_create(self, serializer):
+#         serializer.save()
+    
+#     @action(detail=True, methods=['GET'])
+#     def detail_agent(self, request, pk=None):
+#         agent = self.get_object()
+#         agent.views_count += 1  # Increment view count by 1
+#         agent.save()
+
+#         # Filter properties based on the agent's ID
+#         properties = Property.objects.filter(agent=agent)
+
+#         # Annotate property counts
+#         property_counts = Property.objects.filter(agent=agent).values(
+#             'property_type__home_types',
+#             'property_type__plot_types',
+#             'property_type__commercial_types'
+#         ).annotate(
+#             home_type_count=Count('property_type__home_types'),
+#             plot_type_count=Count('property_type__plot_types'),
+#             commercial_types_count=Count('property_type__commercial_types'),
+#             house_count_rent=Count('pk', filter=Q(property_type__home_types='house', rent_sale_type='rent')),
+#             house_count_sale=Count('pk', filter=Q(property_type__home_types='house', rent_sale_type='sale')),
+#             office_count_rent=Count('pk', filter=Q(property_type__commercial_types='office', rent_sale_type='rent')),
+#             office_count_sale=Count('pk', filter=Q(property_type__commercial_types='office', rent_sale_type='sale'))
+#         )
+
+#          # Count how many properties an agent has for sale and for rent
+#         sale_count = properties.filter(rent_sale_type='sale').count()
+#         rent_count = properties.filter(rent_sale_type='rent').count()
+
+#         # Apply pagination to the properties
+#         paginator = AgentPropertyPagination()
+#         properties = paginator.paginate_queryset(properties, request)
+
+#         serializer = AgentSerializer(instance=agent, context={'request': request})
+#         data = serializer.data
+#         data['properties'] = PropertySerializer(instance=properties, many=True).data
+#         data['property_counts'] = property_counts[0] if property_counts else {}
+#         data['sale_count'] = sale_count
+#         data['rent_count'] = rent_count
+
+#         return paginator.get_paginated_response(data)
+
+
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all().order_by('-created_at')
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
@@ -171,7 +243,7 @@ class AgentViewSet(viewsets.ModelViewSet):
             office_count_sale=Count('pk', filter=Q(property_type__commercial_types='office', rent_sale_type='sale'))
         )
 
-         # Count how many properties an agent has for sale and for rent
+        # Count how many properties an agent has for sale and for rent
         sale_count = properties.filter(rent_sale_type='sale').count()
         rent_count = properties.filter(rent_sale_type='rent').count()
 
@@ -187,5 +259,34 @@ class AgentViewSet(viewsets.ModelViewSet):
         data['rent_count'] = rent_count
 
         return paginator.get_paginated_response(data)
+    
+    @action(detail=True, methods=['PUT'])
+    def update_agent(self, request, pk=None):
+        instance = self.get_object()
+        agent_serializer = AgentSerializer(instance, data=request.data, partial=True)
+        user_serializer = UserSerializer(instance.user, data=request.data.get('user', {}), partial=True)
+        profile_serializer = UserProfileSerializer(instance.user.userprofile, data=request.data.get('userprofile', {}), partial=True)
 
+        # Validate each serializer
+        agent_serializer.is_valid(raise_exception=True)
+        user_serializer.is_valid(raise_exception=True)
+        profile_serializer.is_valid(raise_exception=True)
 
+        # Save the data if all serializers are valid
+        agent_serializer.save()
+        user_serializer.save()
+        profile_serializer.save()
+
+        # Serialize the updated data
+        updated_agent = agent_serializer.data
+        updated_user = user_serializer.data
+        updated_userprofile = profile_serializer.data
+
+        # Combine the serialized data
+        response_data = {
+            "agent": updated_agent,
+            # "user": updated_user,
+            "userprofile": updated_userprofile
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
