@@ -24,7 +24,8 @@ from users.serializers import (
     AuthTokenCustomSerializer,
     UserSerializer,
     RegisterSerializer,
-    UpdateUserSerializer
+    UpdateUserSerializer, 
+    AgentUserUpdateSerializer
 )
 
 class ObtainAuthTokenCustom(ObtainAuthToken):
@@ -262,31 +263,25 @@ class AgentViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['PUT'])
     def update_agent(self, request, pk=None):
-        instance = self.get_object()
-        agent_serializer = AgentSerializer(instance, data=request.data, partial=True)
-        user_serializer = UserSerializer(instance.user, data=request.data.get('user', {}), partial=True)
-        profile_serializer = UserProfileSerializer(instance.user.userprofile, data=request.data.get('userprofile', {}), partial=True)
+        agent_id = pk
+        agent = Agent.objects.get(pk=agent_id)
+        agent_serializer = AgentSerializer(instance=agent, data=request.data.get('agent', {}), partial=True)
 
-        # Validate each serializer
-        agent_serializer.is_valid(raise_exception=True)
-        user_serializer.is_valid(raise_exception=True)
-        profile_serializer.is_valid(raise_exception=True)
+        if agent_serializer.is_valid():
+            agent_serializer.save()
 
-        # Save the data if all serializers are valid
-        agent_serializer.save()
-        user_serializer.save()
-        profile_serializer.save()
+            # Assuming that userprofile data is part of the agent data
+            # If not, you can update it in a similar manner.
+            userprofile_data = request.data.get('userprofile', {})
+            userprofile = agent.user.userprofile
 
-        # Serialize the updated data
-        updated_agent = agent_serializer.data
-        updated_user = user_serializer.data
-        updated_userprofile = profile_serializer.data
+            if userprofile_data:
+                userprofile.phone_number = userprofile_data.get('phone_number', userprofile.phone_number)
+                userprofile.dob = userprofile_data.get('dob', userprofile.dob)
+                userprofile.city = userprofile_data.get('city', userprofile.city)
+                userprofile.country = userprofile_data.get('country', userprofile.country)
+                userprofile.save()
 
-        # Combine the serialized data
-        response_data = {
-            "agent": updated_agent,
-            # "user": updated_user,
-            "userprofile": updated_userprofile
-        }
+            return Response(agent_serializer.data, status=status.HTTP_200_OK)
+        return Response(agent_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(response_data, status=status.HTTP_200_OK)

@@ -26,6 +26,7 @@ class Agent(DatedModel):
     cnic = models.CharField(max_length=100, null=True, blank=True)
     whatsapp_num = models.CharField(max_length=20, null=True, blank=True)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
+    landline_number = models.CharField(max_length=20, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
     nationality = models.CharField(max_length=50, null=True, blank=True)
     languages = models.CharField(max_length=200, null=True, blank=True)
