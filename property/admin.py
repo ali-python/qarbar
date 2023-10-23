@@ -58,7 +58,7 @@ class PropertyInstallmentInline(admin.TabularInline):
     can_delete = False
 
 class PropertyAdmin(admin.ModelAdmin):
-    list_display = ['title', 'rent_sale_type', 'area', 'agent', 'company_agent', 'available', 'total_price', 'date']
+    list_display = ['title', 'rent_sale_type', 'agent', 'company_agent', 'available', 'total_price', 'date']
     def get_formsets_with_inlines(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
             if isinstance(inline, (PropertyAmentiesInline, PropertyTypesInline, PropertyInstallmentInline, MediaTabularAdmin)):
@@ -68,7 +68,7 @@ class PropertyAdmin(admin.ModelAdmin):
             yield inline.get_formset(request, obj), inline
 
 class PropertyLocationAdmin(admin.ModelAdmin):
-    list_display = ('property', 'latitude', 'longitude')
+    list_display = ('property', 'latitude', 'longitude', 'city_area')
 
 
 class MediaAdmin(admin.ModelAdmin):

@@ -74,7 +74,6 @@ class CustomDateField(serializers.ReadOnlyField):
 class PropertySerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, required=False)
     media = MediaSerializer(many=True, read_only=True, source='property_media')
-    area = AreaSerializer(read_only=True)
     amenties = AmentiesSerializer(read_only=True, allow_null = True)
     property_location = PropertyLocationSerializer(read_only=True)
     property_type = PropertyTypesSerializer(read_only=True)
@@ -94,7 +93,6 @@ class PropertySerializer(serializers.ModelSerializer):
             'secondry_phone',
             'email',
             'rent_sale_type',
-            'area',
             'user',
             'agent',
             'company_agent',
@@ -109,6 +107,7 @@ class PropertySerializer(serializers.ModelSerializer):
             'views_count',
             'created_at',
             'updated_at',
+            'admin_check'
         ]
     def get_agent(self, obj):
         agent = obj.agent
@@ -147,6 +146,9 @@ class CreatePropertySerializer(serializers.ModelSerializer):
         agent_data = validated_data.pop('agent', None)
         company_agent_data = validated_data.pop('company_agent', None)
 
+        if agent_data and 'user' in agent_data:
+            agent_data.pop('user')
+            
         property = Property.objects.create(**validated_data)
 
         # Create related objects and link them to the property

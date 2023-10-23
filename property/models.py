@@ -124,6 +124,7 @@ class PropertyInstallment(models.Model):
     ready_for_possession = models.BooleanField(default=False,null=True, blank=True)
 
 class PropertyLocation(models.Model):
+    city_area = models.CharField(max_length=200, null=True, blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
@@ -139,7 +140,6 @@ class Property(DatedModel):
     secondry_phone = models.CharField(max_length=50, null=True, blank=True)
     email = models.CharField(max_length=100, null=True, blank=True)
     rent_sale_type = models.CharField(max_length=20, choices=R_S_TYPES, default="rent", null=True, blank=True)
-    area = models.ForeignKey(Area, related_name="property_area", on_delete=models.CASCADE, null=True, blank=True)
     agent = models.ForeignKey(Agent, related_name="individual_properties", on_delete=models.CASCADE, null=True, blank=True)
     company_agent = models.ForeignKey(CompanyAgent, related_name="company_properties", on_delete=models.CASCADE, null=True, blank=True)
     amenties = models.OneToOneField(PropertyAmenties, on_delete=models.CASCADE, null=True, blank=True)
