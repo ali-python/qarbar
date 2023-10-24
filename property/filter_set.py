@@ -5,8 +5,8 @@ from .models import Property
 class PropertyFilter(filters.FilterSet):
     beds = filters.AllValuesMultipleFilter(field_name='amenties__bedrooms')
     baths = filters.AllValuesMultipleFilter(field_name='amenties__bathrooms')
-    cities = filters.AllValuesMultipleFilter(field_name='area__city__city_name')
-    countries = filters.AllValuesMultipleFilter(field_name='area__city__country__country_name')
+    cities = filters.AllValuesMultipleFilter(field_name='property_location__city_area')
+    countries = filters.AllValuesMultipleFilter(field_name='property_location__city_area')
     title = django_filters.CharFilter(lookup_expr='icontains')
     total_price = django_filters.NumberFilter(lookup_expr='exact')
     min_price = django_filters.NumberFilter(field_name='total_price', lookup_expr='gte')

@@ -74,6 +74,7 @@ class PropertyTypes(models.Model):
     HOME_TYPES = (
         ('null', 'Null'),
         ('house', 'House'),
+        ('villa', 'Villa'),
         ('flat', 'Flat'),
         ('upper_portion', 'Uper Portion'),
         ('lower_portion', 'Lower Portion'),
@@ -124,6 +125,7 @@ class PropertyInstallment(models.Model):
     ready_for_possession = models.BooleanField(default=False,null=True, blank=True)
 
 class PropertyLocation(models.Model):
+    city_area = models.CharField(max_length=200, null=True, blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True)
 
@@ -132,14 +134,13 @@ class Property(DatedModel):
         ('rent', 'Rent'),
         ('sale', 'Sale'),
     )
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True ,related_name='user_property')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True ,  blank=True,related_name='user_property')
     title = models.CharField(max_length=200, null=True, blank=True)
     phone = models.CharField(max_length=50, default=0)
     landline = models.CharField(max_length=50, null=True, blank=True)
     secondry_phone = models.CharField(max_length=50, null=True, blank=True)
     email = models.CharField(max_length=100, null=True, blank=True)
     rent_sale_type = models.CharField(max_length=20, choices=R_S_TYPES, default="rent", null=True, blank=True)
-    area = models.ForeignKey(Area, related_name="property_area", on_delete=models.CASCADE, null=True, blank=True)
     agent = models.ForeignKey(Agent, related_name="individual_properties", on_delete=models.CASCADE, null=True, blank=True)
     company_agent = models.ForeignKey(CompanyAgent, related_name="company_properties", on_delete=models.CASCADE, null=True, blank=True)
     amenties = models.OneToOneField(PropertyAmenties, on_delete=models.CASCADE, null=True, blank=True)
