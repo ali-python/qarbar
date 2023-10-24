@@ -74,6 +74,7 @@ class PropertyTypes(models.Model):
     HOME_TYPES = (
         ('null', 'Null'),
         ('house', 'House'),
+        ('villa', 'Villa'),
         ('flat', 'Flat'),
         ('upper_portion', 'Uper Portion'),
         ('lower_portion', 'Lower Portion'),
@@ -133,7 +134,7 @@ class Property(DatedModel):
         ('rent', 'Rent'),
         ('sale', 'Sale'),
     )
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True ,related_name='user_property')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True ,  blank=True,related_name='user_property')
     title = models.CharField(max_length=200, null=True, blank=True)
     phone = models.CharField(max_length=50, default=0)
     landline = models.CharField(max_length=50, null=True, blank=True)

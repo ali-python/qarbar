@@ -10,6 +10,7 @@ from PIL import Image, UnidentifiedImageError
 from urllib.parse import urlparse 
 from users.serializers import UserSerializer
 from io import BytesIO
+from django.contrib.auth.models import User
 import base64
 import requests
 from .models import (
@@ -117,6 +118,144 @@ class PropertySerializer(serializers.ModelSerializer):
             return None
     
 
+# class CreatePropertySerializer(serializers.ModelSerializer):
+#     media = serializers.ListSerializer(
+#         child=serializers.DictField(
+#             child=serializers.CharField(max_length=200)
+#         ),
+#         required=True
+#     )
+#     amenties = AmentiesSerializer(allow_null=True, required=False)
+#     property_type = PropertyTypesSerializer(allow_null=True, required=False)
+#     property_location = PropertyLocationSerializer(allow_null=True, required=False)
+#     installment = InstallmentSerializer(allow_null=True, required=False)
+#     user = UserSerializer(allow_null=True, required=False)
+#     agent = AgentSerializer(allow_null=True, required=False)
+#     company_agent = CompanyAgentSerializer(allow_null=True, required=False)
+
+#     class Meta:
+#         model = Property
+#         fields = '__all__'
+
+    # def create(self, validated_data):
+    #     media_data = validated_data.pop('media')
+    #     amenties_data = validated_data.pop('amenties', None)
+    #     property_type_data = validated_data.pop('property_type', None)
+    #     property_location_data = validated_data.pop('property_location', None)
+    #     installment_data = validated_data.pop('installment', None)
+    #     user_data = validated_data.pop('user', None)
+    #     agent_data = validated_data.pop('agent', None)
+    #     company_agent_data = validated_data.pop('company_agent', None)
+
+    #     if agent_data and 'user' in agent_data:
+    #         agent_data.pop('user')
+            
+    #     property = Property.objects.create(**validated_data)
+
+    #     # Create related objects and link them to the property
+    #     if amenties_data:
+    #         pa = PropertyAmenties.objects.create(property=property, **amenties_data)
+    #         property.amenties = pa
+    #         property.save()
+
+    #     if property_type_data:
+    #         pt = PropertyTypes.objects.create(property=property, **property_type_data)
+    #         property.property_type = pt
+    #         property.save()
+
+    #     if property_location_data:
+    #         pl = PropertyLocation.objects.create(property=property, **property_location_data)
+    #         property.property_location = pl
+    #         property.save()
+
+    #     if installment_data:
+    #         pi = PropertyInstallment.objects.create(property=property, **installment_data)
+    #         property.installment = pi
+    #         property.save()
+
+    #     if user_data:
+    #         user = User.objects.create(**user_data)
+    #         property.user = user
+    #         property.save()
+
+    #     if agent_data:
+    #         agent = Agent.objects.create(**agent_data)
+    #         property.agent = agent
+    #         property.save()
+
+    #     if company_agent_data:
+    #         company_agent = CompanyAgent.objects.create(**company_agent_data)
+    #         property.company_agent = company_agent
+    #         property.save()
+
+    #     for media in media_data:
+    #         Media.objects.create(property=property, **media)
+
+    #     return property
+
+# class CreatePropertySerializer(serializers.ModelSerializer):
+#     media = serializers.ListSerializer(
+#         child=serializers.DictField(
+#             child=serializers.CharField(max_length=200)
+#         ),
+#         required=True
+#     )
+#     amenties = AmentiesSerializer(allow_null=True, required=False)
+#     property_type = PropertyTypesSerializer(allow_null=True, required=False)
+#     property_location = PropertyLocationSerializer(allow_null=True, required=False)
+#     installment = InstallmentSerializer(allow_null=True, required=False)
+#     agent_id = serializers.IntegerField(allow_null=True, required=False)
+
+#     class Meta:
+#         model = Property
+#         exclude = ('user', 'agent', 'company_agent')
+
+#     def create(self, validated_data):
+#         media_data = validated_data.pop('media')
+#         amenties_data = validated_data.pop('amenties', None)
+#         property_type_data = validated_data.pop('property_type', None)
+#         property_location_data = validated_data.pop('property_location', None)
+#         installment_data = validated_data.pop('installment', None)
+#         agent_id = validated_data.pop('agent_id', None)
+
+#         # Create the property
+#         property = Property.objects.create(**validated_data)
+
+#         # Link the agent (if agent_id is provided)
+#         if agent_id:
+#             try:
+#                 agent = Agent.objects.get(id=agent_id)
+#                 property.agent = agent
+#                 property.save()
+#             except Agent.DoesNotExist:
+#                 pass  # Handle the case where the provided agent ID does not exist
+
+#         # Create related objects and link them to the property
+#         if amenties_data:
+#             pa = PropertyAmenties.objects.create(property=property, **amenties_data)
+#             property.amenties = pa
+#             property.save()
+
+#         if property_type_data:
+#             pt = PropertyTypes.objects.create(property=property, **property_type_data)
+#             property.property_type = pt
+#             property.save()
+
+#         if property_location_data:
+#             pl = PropertyLocation.objects.create(property=property, **property_location_data)
+#             property.property_location = pl
+#             property.save()
+
+#         if installment_data:
+#             pi = PropertyInstallment.objects.create(property=property, **installment_data)
+#             property.installment = pi
+#             property.save()
+
+#         for media in media_data:
+#             Media.objects.create(property=property, **media)
+
+#         return property
+
 class CreatePropertySerializer(serializers.ModelSerializer):
     media = serializers.ListSerializer(
         child=serializers.DictField(
@@ -128,13 +267,12 @@ class CreatePropertySerializer(serializers.ModelSerializer):
     property_type = PropertyTypesSerializer(allow_null=True, required=False)
     property_location = PropertyLocationSerializer(allow_null=True, required=False)
     installment = InstallmentSerializer(allow_null=True, required=False)
-    user = UserSerializer(allow_null=True, required=False)
-    agent = AgentSerializer(allow_null=True, required=False)
-    company_agent = CompanyAgentSerializer(allow_null=True, required=False)
+    agent_id = serializers.IntegerField(allow_null=True, required=False)
+    user_id = serializers.IntegerField(allow_null=True, required=False)
 
     class Meta:
         model = Property
-        fields = '__all__'
+        exclude = ('user', 'agent', 'company_agent')
 
     def create(self, validated_data):
         media_data = validated_data.pop('media')
@@ -142,14 +280,31 @@ class CreatePropertySerializer(serializers.ModelSerializer):
         property_type_data = validated_data.pop('property_type', None)
         property_location_data = validated_data.pop('property_location', None)
         installment_data = validated_data.pop('installment', None)
-        user_data = validated_data.pop('user', None)
-        agent_data = validated_data.pop('agent', None)
-        company_agent_data = validated_data.pop('company_agent', None)
+        agent_id = validated_data.pop('agent_id', None)
+        user_id = validated_data.pop('user_id', None)
 
-        if agent_data and 'user' in agent_data:
-            agent_data.pop('user')
-            
+        # Create the property
         property = Property.objects.create(**validated_data)
+
+        # Link the agent (if agent_id is provided)
+        if agent_id:
+            try:
+                agent = Agent.objects.get(id=agent_id)
+                property.agent = agent
+                property.save()
+            except Agent.DoesNotExist:
+                pass  # Handle the case where the provided agent ID does not exist
+
+        # Link the user (if user_id is provided)
+        if user_id:
+            print(user_id)
+            print("_________________________")
+            try:
+                user = User.objects.get(id=user_id)
+                property.user = user
+                property.save()
+            except User.DoesNotExist:
+                pass  # Handle the case where the provided user ID does not exist
 
         # Create related objects and link them to the property
         if amenties_data:
@@ -172,23 +327,7 @@ class CreatePropertySerializer(serializers.ModelSerializer):
             property.installment = pi
             property.save()
 
-        if user_data:
-            user = User.objects.create(**user_data)
-            property.user = user
-            property.save()
-
-        if agent_data:
-            agent = Agent.objects.create(**agent_data)
-            property.agent = agent
-            property.save()
-
-        if company_agent_data:
-            company_agent = CompanyAgent.objects.create(**company_agent_data)
-            property.company_agent = company_agent
-            property.save()
-
         for media in media_data:
             Media.objects.create(property=property, **media)
 
         return property
-
